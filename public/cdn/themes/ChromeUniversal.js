@@ -19,7 +19,7 @@
 
   // Panel title
   var title = document.createElement('h3');
-  title.textContent = 'ChromeGit Theme';
+  title.textContent = 'Chrome Basic Themes';
   title.style.cssText = 'font-size:14px;margin:0 0 8px;color:#fff;';
   panel.appendChild(title);
 
