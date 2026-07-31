@@ -4,8 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ChromeWeb – Rewrite the Internet</title>
+  <!-- Favicon: ChromeWeb SVG + fallback PNG -->
   <link rel="icon" type="image/png" href="/icon.png">
-  <!-- Google Fonts -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 70 70' fill='none'%3E%3Ccircle cx='35' cy='35' r='34' stroke='%23c0c0c0' stroke-width='2'/%3E%3Cpath d='M20 25h30v20H20z' fill='none' stroke='%23c0c0c0' stroke-width='2'/%3E%3Cpath d='M25 30l10 10-10 10' stroke='%23c0c0c0' stroke-width='2' fill='none'/%3E%3C/svg%3E">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600&family=Inter:opsz,wght@14..32,400..700&family=Orbitron:wght@600&family=Roboto+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
   <style>
@@ -18,13 +19,12 @@
       position: relative;
     }
 
-    /* Vanta background container */
+    /* Background layers */
     #vanta-bg {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100vw; height: 100vh;
-      z-index: 0;
-      pointer-events: none; /* let clicks pass through to content */
+      position: fixed; top:0; left:0; width:100vw; height:100vh; z-index:0; pointer-events:none;
+    }
+    #vanta-dots {
+      position: fixed; top:0; left:0; width:100%; height:100%; z-index:1; pointer-events:none; opacity:0.3;
     }
 
     /* Topbar */
@@ -48,9 +48,16 @@
 
     /* Hero */
     .hero {
-      position:relative; z-index:1; min-height:100vh;
+      position:relative; z-index:2; min-height:100vh;
       display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center;
       padding:120px 20px 60px;
+    }
+    .hero-icon {
+      width: 80px; height: 80px;
+      background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.2), transparent 70%);
+      border-radius: 50%;
+      display: flex; align-items:center; justify-content:center;
+      margin-bottom: 20px;
     }
     .hero h1 {
       font-size: clamp(3.5rem, 10vw, 6rem); font-weight:900;
@@ -63,8 +70,6 @@
     .hero .subtitle {
       font-size:1.2rem; color:rgba(255,255,255,0.35); margin-top:12px;
     }
-
-    /* Stats */
     .stats {
       display:flex; justify-content:center; gap:30px; margin:50px 0; flex-wrap:wrap; padding:0 20px; z-index:1; position:relative;
     }
@@ -75,7 +80,6 @@
     .stat-box h2 { font-size:2.2rem; background:linear-gradient(180deg, #fff, #888); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
     .stat-box p { color:rgba(255,255,255,0.3); font-size:0.8rem; text-transform:uppercase; letter-spacing:2px; margin-top:4px; }
 
-    /* Buttons */
     .btn-group { display:flex; gap:1rem; flex-wrap:wrap; justify-content:center; margin-top:30px; }
     .liquid-btn {
       padding:0.9rem 2.2rem; border-radius:9999px; font-weight:600; font-size:1rem;
@@ -93,7 +97,7 @@
 
     /* Features Bento Grid */
     .features-section {
-      position:relative; z-index:1; padding:80px 40px; max-width:1200px; margin:0 auto;
+      position:relative; z-index:2; padding:80px 40px; max-width:1200px; margin:0 auto;
     }
     .features-section h2 {
       font-size:2rem; background:linear-gradient(135deg, #fff, #aaa);
@@ -118,14 +122,36 @@
       padding:8px 16px; border-radius:8px; cursor:pointer; font-size:0.85rem; transition: background 0.2s;
     }
     .bento-card button:hover { background: rgba(255,255,255,0.2); }
+    .font-demo-text { padding:12px; background:rgba(255,255,255,0.05); border-radius:12px; margin-top:8px; font-size:1rem; }
 
-    .font-demo-text {
-      padding:12px; background:rgba(255,255,255,0.05); border-radius:12px; margin-top:8px; font-size:1rem;
+    /* FAQ section */
+    .faq-section {
+      position:relative; z-index:2; max-width:800px; margin:80px auto; padding:0 20px;
     }
+    .faq-section h2 {
+      font-size:2rem; background:linear-gradient(135deg, #fff, #aaa);
+      -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; text-align:center; margin-bottom:40px;
+    }
+    .faq-item {
+      background: rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.06);
+      border-radius:16px; margin-bottom:16px; overflow:hidden;
+      transition: border-color 0.3s;
+    }
+    .faq-question {
+      width:100%; padding:20px; display:flex; justify-content:space-between; align-items:center;
+      background:none; border:none; color:#fff; font-size:1rem; font-weight:600; cursor:pointer; text-align:left;
+    }
+    .faq-question:hover { background:rgba(255,255,255,0.03); }
+    .faq-question svg { transition: transform 0.3s; }
+    .faq-answer {
+      padding:0 20px 20px; color:#b0b0b0; display:none; font-size:0.95rem; line-height:1.6;
+    }
+    .faq-item.open .faq-question svg { transform: rotate(180deg); }
+    .faq-item.open .faq-answer { display:block; }
 
     /* Audio demo section */
     .audio-section {
-      position:relative; z-index:1; display:flex; justify-content:center; padding:60px 20px;
+      position:relative; z-index:2; display:flex; justify-content:center; padding:60px 20px;
     }
     .audio-demo {
       width:100%; max-width:350px; background: rgba(20,20,20,0.6); backdrop-filter:blur(8px);
@@ -135,27 +161,29 @@
     }
     .audio-demo .track-row { display:flex; justify-content:space-between; align-items:center; }
     .audio-demo .track-name { font-weight:600; color:#fff; }
-    .progress-bar { height:4px; background:#333; border-radius:2px; overflow:hidden; }
-    .progress-fill { width:38%; height:100%; background:linear-gradient(to right, #c0c0c0, #e0e0e0); }
+    .progress-bar { height:4px; background:#333; border-radius:2px; overflow:hidden; cursor:pointer; }
+    .progress-fill { width:0%; height:100%; background:linear-gradient(to right, #c0c0c0, #e0e0e0); }
     .audio-controls { display:flex; justify-content:space-between; align-items:center; }
     .play-btn {
       width:2.2rem; height:2.2rem; border-radius:50%; background:rgba(255,255,255,0.1); color:#c0c0c0;
       display:flex; align-items:center; justify-content:center; cursor:pointer; transition:0.2s; border:none;
     }
     .play-btn:hover { background:rgba(255,255,255,0.2); color:#fff; }
+    .dock-btn { background:none; border:none; color:#c0c0c0; cursor:pointer; }
 
     /* Footer */
     .footer {
       text-align:center; padding:40px; border-top:1px solid rgba(255,255,255,0.05);
-      color:rgba(255,255,255,0.2); font-size:0.8rem; position:relative; z-index:1;
+      color:rgba(255,255,255,0.2); font-size:0.8rem; position:relative; z-index:2;
     }
     .footer a { color:rgba(255,255,255,0.4); text-decoration:none; }
   </style>
 </head>
 <body>
 
-  <!-- Vanta Globe Background -->
+  <!-- Background Layers -->
   <div id="vanta-bg"></div>
+  <div id="vanta-dots"></div>
 
   <!-- Topbar -->
   <header class="topbar">
@@ -178,6 +206,14 @@
 
   <!-- Hero -->
   <section class="hero">
+    <!-- Large ChromeWeb Icon -->
+    <div class="hero-icon">
+      <svg width="50" height="50" viewBox="0 0 70 70" fill="none">
+        <circle cx="35" cy="35" r="34" stroke="#c0c0c0" stroke-width="2"/>
+        <path d="M20 25h30v20H20z" fill="none" stroke="#c0c0c0" stroke-width="2"/>
+        <path d="M25 30l10 10-10 10" stroke="#c0c0c0" stroke-width="2" fill="none"/>
+      </svg>
+    </div>
     <h1>ChromeWeb</h1>
     <p class="subtitle">Rewrite the internet. Inject your own CSS, JS, HTML.</p>
     <div class="stats">
@@ -199,10 +235,9 @@
 
   <!-- Features Bento Grid -->
   <section class="features-section">
-    <h2>Everything You Can Do</h2>
+    <h2>Core Features</h2>
     <div class="bento-grid">
-
-      <!-- Theme Injection -->
+      <!-- Universal Theming -->
       <div class="bento-card">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
         <h3>Universal Theming</h3>
@@ -210,7 +245,7 @@
         <div class="demo-area">
           <button onclick="this.parentElement.querySelector('.theme-demo').classList.toggle('dark-mode')">Toggle Theme</button>
           <div class="theme-demo font-demo-text" style="background: #ffffff11; color: #ccc; transition: all 0.3s;">
-            This is a live preview — click the button to see a dark mode switch.
+            Live preview – click to toggle
           </div>
           <style>
             .theme-demo.dark-mode { background: #1e1e1e !important; color: #fff !important; }
@@ -231,22 +266,20 @@
         </div>
       </div>
 
-      <!-- Font Changer (interactive) -->
+      <!-- Font Customizer -->
       <div class="bento-card">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 7 12 21 20 7"/><line x1="7" y1="12" x2="17" y2="12"/></svg>
         <h3>Font Customizer</h3>
         <p>Change the font of any website — even the one you're on right now.</p>
         <div class="demo-area">
           <select id="fontSelector" style="background:#1e1e1e; color:#fff; padding:6px; border-radius:6px; border:1px solid #555; margin-right:8px;">
-            <option value="Inter">Inter (default)</option>
+            <option value="Inter">Inter</option>
             <option value="'Roboto Mono', monospace">Roboto Mono</option>
             <option value="'Dancing Script', cursive">Dancing Script</option>
             <option value="'Orbitron', sans-serif">Orbitron</option>
           </select>
           <button onclick="document.getElementById('fontDemoText').style.fontFamily = document.getElementById('fontSelector').value;">Apply</button>
-          <div id="fontDemoText" class="font-demo-text">
-            The quick brown fox jumps over the lazy dog.
-          </div>
+          <div id="fontDemoText" class="font-demo-text">The quick brown fox jumps over the lazy dog.</div>
         </div>
       </div>
 
@@ -262,7 +295,7 @@
         </div>
       </div>
 
-      <!-- Audio Player -->
+      <!-- Audio Anywhere -->
       <div class="bento-card">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
         <h3>Audio Anywhere</h3>
@@ -273,26 +306,112 @@
       <div class="bento-card">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
         <h3>Cross Platform</h3>
-        <p>Available as extension, desktop exe, bookmarklet, and even iOS Shortcuts.</p>
+        <p>Available as extension, desktop exe, bookmarklet, and iOS Shortcuts.</p>
       </div>
     </div>
   </section>
 
-  <!-- Audio Player Demo -->
-  <section class="audio-section">
+  <!-- Pre-built Mods Showcase -->
+  <section class="features-section">
+    <h2>Pre‑built Mods (Ready to Install)</h2>
+    <div class="bento-grid">
+      <!-- Dark Mode Everywhere -->
+      <div class="bento-card">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        <h3>Dark Mode Everywhere</h3>
+        <p>Instantly darken any website with a pre‑made, polished dark theme.</p>
+        <button onclick="alert('Mod installed! (demo)')">Install</button>
+      </div>
+
+      <!-- Wikipedia Redesign -->
+      <div class="bento-card">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+        <h3>Wikipedia Clean</h3>
+        <p>Minimalist, distraction‑free reading on Wikipedia.</p>
+        <button onclick="alert('Mod installed! (demo)')">Install</button>
+      </div>
+
+      <!-- YouTube Theatre -->
+      <div class="bento-card">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+        <h3>YouTube Theatre Mode+</h3>
+        <p>Auto‑expand the player and hide distractions.</p>
+        <button onclick="alert('Mod installed! (demo)')">Install</button>
+      </div>
+
+      <!-- Discord Nitro Feel -->
+      <div class="bento-card">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        <h3>Discord Nitro Feel</h3>
+        <p>Animated avatars, emoji everywhere, and premium profile effects.</p>
+        <button onclick="alert('Mod installed! (demo)')">Install</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ Section -->
+  <section class="faq-section">
+    <h2>Frequently Asked Questions</h2>
+    <div class="faq-item">
+      <button class="faq-question">
+        What is ChromeWeb?
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+      <div class="faq-answer">
+        ChromeWeb is a platform that lets you inject custom CSS, JavaScript, and HTML into any website. You can change how any page looks, add new features, and share your mods with the community.
+      </div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-question">
+        Is it free?
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+      <div class="faq-answer">
+        Yes! ChromeWeb is completely free to use. The marketplace includes both free and premium mods, but the core platform is free and open source.
+      </div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-question">
+        How do I install a mod?
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+      <div class="faq-answer">
+        Browse the <a href="/store" style="color:#c0c0c0;">store</a>, pick a mod, and click "Install". It will be added to your dashboard and activated automatically.
+      </div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-question">
+        Can I create my own mods?
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+      <div class="faq-answer">
+        Absolutely. Use the built‑in editor in the Dashboard to write CSS, JS, and HTML. You can even upload and sell your mods on the marketplace.
+      </div>
+    </div>
+  </section>
+
+  <!-- Audio Player -->
+  <section class="audio-section" id="audioSection">
     <div class="audio-demo">
       <div class="track-row">
-        <span class="track-name">Midnight Silver – ChromeWeb OST</span>
+        <span class="track-name" id="trackName">vax - rod</span>
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
       </div>
-      <div class="progress-bar"><div class="progress-fill"></div></div>
-      <div class="audio-controls">
-        <button class="dock-btn" style="width:2rem;height:2rem;background:none;border:none;color:#c0c0c0; cursor:pointer;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="19 20 9 12 19 4 19 20"/><line x1="5" y1="19" x2="5" y2="5"/></svg></button>
-        <div class="play-btn" id="audioPlayBtn">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M6 4l15 8-15 8z"/></svg>
-        </div>
-        <button class="dock-btn" style="width:2rem;height:2rem;background:none;border:none;color:#c0c0c0; cursor:pointer;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 4 15 12 5 20 5 4"/><line x1="19" y1="5" x2="19" y2="19"/></svg></button>
+      <div class="progress-bar" id="progressBarContainer">
+        <div class="progress-fill" id="progressFill"></div>
       </div>
+      <div class="audio-controls">
+        <button class="dock-btn" id="prevBtn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="19 20 9 12 19 4 19 20"/><line x1="5" y1="19" x2="5" y2="5"/></svg>
+        </button>
+        <div class="play-btn" id="playBtn">
+          <svg id="playIcon" width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M6 4l15 8-15 8z"/></svg>
+        </div>
+        <button class="dock-btn" id="nextBtn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 4 15 12 5 20 5 4"/><line x1="19" y1="5" x2="19" y2="19"/></svg>
+        </button>
+      </div>
+      <audio id="audioPlayer" src="/audio/vax-rod.mp3" preload="auto"></audio>
     </div>
   </section>
 
@@ -304,8 +423,10 @@
   <!-- Vanta.js dependencies -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.globe.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.dots.min.js"></script>
+
   <script>
-    // Activate Vanta Globe background
+    // --- Background: Globe + Dots overlay ---
     VANTA.GLOBE({
       el: "#vanta-bg",
       mouseControls: true,
@@ -319,17 +440,87 @@
       size: 2.00,
       backgroundColor: 0x0
     });
-  </script>
 
-  <script>
-    // Audio play button toggle
-    const playBtn = document.getElementById('audioPlayBtn');
-    let playing = false;
-    playBtn.addEventListener('click', () => {
-      playing = !playing;
-      playBtn.innerHTML = playing
-        ? '<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M6 4h4v16H6zM14 4h4v16h-4z"/></svg>'
-        : '<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M6 4l15 8-15 8z"/></svg>';
+    VANTA.DOTS({
+      el: "#vanta-dots",
+      mouseControls: false,
+      touchControls: false,
+      gyroControls: false,
+      minHeight: 200.00,
+      minWidth: 200.00,
+      scale: 1.00,
+      scaleMobile: 1.00,
+      color: 0xd7d7d7,
+      color2: 0xd7d7d7,
+      backgroundColor: 0x0,
+      size: 1.60,
+      spacing: 15.00,
+      showLines: false
+    });
+
+    // --- Audio Player Logic ---
+    (function() {
+      const audio = document.getElementById('audioPlayer');
+      const playBtn = document.getElementById('playBtn');
+      const playIcon = document.getElementById('playIcon');
+      const prevBtn = document.getElementById('prevBtn');
+      const nextBtn = document.getElementById('nextBtn');
+      const progressFill = document.getElementById('progressFill');
+      const progressBarContainer = document.getElementById('progressBarContainer');
+
+      function togglePlay() {
+        if (audio.paused) {
+          audio.play();
+        } else {
+          audio.pause();
+        }
+      }
+
+      function updatePlayIcon() {
+        if (audio.paused) {
+          playIcon.innerHTML = '<path d="M6 4l15 8-15 8z"/>';
+        } else {
+          playIcon.innerHTML = '<path d="M6 4h4v16H6zM14 4h4v16h-4z"/>';
+        }
+      }
+
+      function updateProgress() {
+        if (audio.duration) {
+          const percent = (audio.currentTime / audio.duration) * 100;
+          progressFill.style.width = percent + '%';
+        }
+      }
+
+      function seek(e) {
+        const rect = progressBarContainer.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const width = rect.width;
+        if (audio.duration) {
+          audio.currentTime = (x / width) * audio.duration;
+        }
+      }
+
+      playBtn.addEventListener('click', togglePlay);
+      audio.addEventListener('play', updatePlayIcon);
+      audio.addEventListener('pause', updatePlayIcon);
+      audio.addEventListener('timeupdate', updateProgress);
+      audio.addEventListener('ended', () => { audio.currentTime = 0; updatePlayIcon(); });
+      progressBarContainer.addEventListener('click', seek);
+
+      prevBtn.addEventListener('click', () => { audio.currentTime = 0; updateProgress(); });
+      nextBtn.addEventListener('click', () => { audio.currentTime = 0; updateProgress(); });
+    })();
+
+    // --- FAQ Accordion ---
+    document.querySelectorAll('.faq-question').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const item = btn.parentElement;
+        item.classList.toggle('open');
+        // Close others (optional)
+        document.querySelectorAll('.faq-item').forEach(other => {
+          if (other !== item) other.classList.remove('open');
+        });
+      });
     });
   </script>
 </body>
