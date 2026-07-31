@@ -1,5 +1,5 @@
 /**
- * ChromeGit – Theme Switcher for GitHub
+ * ChromeUniversal – Theme Switcher for websites with Basic CSS.
  * Injects a floating panel with 6 colour themes.
  * Excludes elements containing hex hashes (like icon hashes) to keep icons readable.
  */
