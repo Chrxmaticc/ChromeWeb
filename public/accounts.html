@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ChromeWeb – Account</title>
-  <link rel="icon" type="image/png" href="/icon.png">
+  <link rel="icon" type="image/png" href="icon.png">
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 70 70' fill='none'%3E%3Ccircle cx='35' cy='35' r='34' stroke='%23c0c0c0' stroke-width='2'/%3E%3Cpath d='M20 25h30v20H20z' fill='none' stroke='%23c0c0c0' stroke-width='2'/%3E%3Cpath d='M25 30l10 10-10 10' stroke='%23c0c0c0' stroke-width='2' fill='none'/%3E%3C/svg%3E">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400..700&display=swap" rel="stylesheet">
@@ -25,7 +25,6 @@
     #vanta-bg-light { position:fixed; top:0; left:0; width:100vw; height:100vh; z-index:0; pointer-events:none; display:none; }
     #vanta-dots-light { position:fixed; top:0; left:0; width:100%; height:100%; z-index:1; pointer-events:none; opacity:0.3; display:none; }
 
-    /* Topbar */
     .topbar {
       position:relative; z-index:1000; width:100%; padding:16px 40px;
       display:flex; justify-content:space-between; align-items:center;
@@ -39,7 +38,6 @@
     .topbar nav a { color:#aaa; text-decoration:none; font-size:0.95rem; transition:color 0.2s; }
     .topbar nav a:hover { color:#fff; }
 
-    /* Theme toggle button */
     .theme-toggle-btn {
       background: rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.15);
       border-radius:9999px; padding:0.5rem 1rem; cursor:pointer; display:flex; align-items:center; gap:0.5rem;
@@ -55,16 +53,11 @@
     [data-theme="light"] .sun-icon { opacity:1; transform:rotate(0deg); }
     .toggle-label::after { content:'Light'; }
     [data-theme="light"] .toggle-label::after { content:'Dark'; }
-    [data-theme="light"] .theme-toggle-btn { background:rgba(0,0,0,0.05); border-color:rgba(0,0,0,0.15); color:#333; }
-    [data-theme="light"] .theme-toggle-btn:hover { background:rgba(0,0,0,0.1); border-color:rgba(0,0,0,0.25); color:#000; }
 
-    /* Main content */
     .main {
       flex:1; display:flex; align-items:center; justify-content:center;
-      padding:2rem;
-      position:relative; z-index:2;
+      padding:2rem; position:relative; z-index:2;
     }
-
     .accounts-card {
       width:100%; max-width:420px;
       background: rgba(18,18,18,0.55); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
@@ -81,28 +74,20 @@
       background: linear-gradient(135deg,#fff,#aaa);
       -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
     }
-    .form-group {
-      margin-bottom:1.2rem;
-      position:relative;
-    }
-    .form-group label {
-      display:block; font-size:0.85rem; color:#b0b0b0; margin-bottom:0.4rem;
-    }
+    .form-group { margin-bottom:1.2rem; }
+    .form-group label { display:block; font-size:0.85rem; color:#b0b0b0; margin-bottom:0.4rem; }
     .input-wrapper {
       display:flex; align-items:center; gap:10px;
       background: rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1);
-      border-radius:12px; padding:0.7rem 1rem;
-      transition: border-color 0.3s;
+      border-radius:12px; padding:0.7rem 1rem; transition: border-color 0.3s;
     }
     .input-wrapper:focus-within { border-color:#808080; }
     .input-wrapper svg { color:#808080; flex-shrink:0; }
     .input-wrapper input {
       background:transparent; border:none; outline:none;
-      color:#fff; font-size:1rem; width:100%;
-      font-family:inherit;
+      color:#fff; font-size:1rem; width:100%; font-family:inherit;
     }
     .input-wrapper input::placeholder { color:#555; }
-
     .btn {
       width:100%; padding:0.9rem; border-radius:9999px; font-weight:600; font-size:1rem;
       color:#0a0a0a; background:linear-gradient(135deg,#e0e0e0,#808080);
@@ -112,36 +97,31 @@
       text-align:center;
     }
     .btn:hover { transform:scale(1.02); box-shadow:0 15px 30px rgba(192,192,192,0.3); }
-    .alt-action {
-      text-align:center; margin-top:1.2rem; font-size:0.9rem; color:#b0b0b0;
-    }
+    .alt-action { text-align:center; margin-top:1.2rem; font-size:0.9rem; color:#b0b0b0; }
     .alt-action a { color:#c0c0c0; text-decoration:none; font-weight:600; }
     .alt-action a:hover { color:#fff; }
-
-    /* Toggle form */
     .form-login, .form-register { display:none; }
     .form-login.active, .form-register.active { display:block; }
 
-    /* Footer */
     .footer {
       text-align:center; padding:20px; border-top:1px solid rgba(255,255,255,0.05);
       color:rgba(255,255,255,0.2); font-size:0.8rem; position:relative; z-index:2;
     }
     .footer a { color:rgba(255,255,255,0.4); text-decoration:none; }
 
-    /* Light mode overrides */
     [data-theme="light"] body { background:#f7f7f7; }
     [data-theme="light"] .topbar { background:rgba(255,255,255,0.85); border-bottom-color:rgba(0,0,0,0.1); }
     [data-theme="light"] .topbar .logo span { background:linear-gradient(135deg,#333,#555); -webkit-background-clip:text; background-clip:text; }
     [data-theme="light"] .topbar nav a { color:#555; }
     [data-theme="light"] .topbar nav a:hover { color:#000; }
+    [data-theme="light"] .theme-toggle-btn { background:rgba(0,0,0,0.05); border-color:rgba(0,0,0,0.15); color:#333; }
+    [data-theme="light"] .theme-toggle-btn:hover { background:rgba(0,0,0,0.1); border-color:rgba(0,0,0,0.25); color:#000; }
     [data-theme="light"] .accounts-card { background:rgba(255,255,255,0.6); border-color:rgba(0,0,0,0.1); }
     [data-theme="light"] .accounts-card h2 { background:linear-gradient(135deg,#222,#888); -webkit-background-clip:text; background-clip:text; }
     [data-theme="light"] .form-group label { color:#555; }
     [data-theme="light"] .input-wrapper { background:rgba(0,0,0,0.03); border-color:rgba(0,0,0,0.1); }
     [data-theme="light"] .input-wrapper input { color:#222; }
     [data-theme="light"] .input-wrapper input::placeholder { color:#999; }
-    [data-theme="light"] .btn { color:#0a0a0a; background:linear-gradient(135deg,#e0e0e0,#808080); }
     [data-theme="light"] .alt-action { color:#555; }
     [data-theme="light"] .alt-action a { color:#333; }
     [data-theme="light"] .footer { border-top-color:rgba(0,0,0,0.1); color:rgba(0,0,0,0.3); }
@@ -150,15 +130,13 @@
 </head>
 <body>
 
-  <!-- Background layers -->
   <div id="vanta-bg"></div>
   <div id="vanta-dots"></div>
   <div id="vanta-bg-light"></div>
   <div id="vanta-dots-light"></div>
 
-  <!-- Topbar -->
   <header class="topbar">
-    <a href="/" class="logo">
+    <a href="index.html" class="logo">
       <svg viewBox="0 0 70 70" fill="none">
         <circle cx="35" cy="35" r="34" stroke="url(#grad)" stroke-width="2"/>
         <path d="M20 25h30v20H20z" fill="none" stroke="url(#grad)" stroke-width="2"/>
@@ -168,10 +146,10 @@
       <span>ChromeWeb</span>
     </a>
     <nav>
-      <a href="/">Home</a>
-      <a href="/store">Store</a>
-      <a href="/app">Dashboard</a>
-      <a href="/docs">Docs</a>
+      <a href="index.html">Home</a>
+      <a href="store.html">Store</a>
+      <a href="accounts.html">Account</a>
+      <a href="docs.html">Docs</a>
       <button class="theme-toggle-btn" id="themeToggle">
         <span class="toggle-track">
           <span class="toggle-icons">
@@ -184,11 +162,8 @@
     </nav>
   </header>
 
-  <!-- Main Content -->
   <div class="main">
     <div class="accounts-card" id="accountsCard">
-
-      <!-- Login Form -->
       <div class="form-login active" id="loginForm">
         <h2>Welcome back</h2>
         <div class="form-group">
@@ -208,8 +183,6 @@
         <button class="btn" id="loginBtn">Log In</button>
         <p class="alt-action">Don't have an account? <a href="#" id="showRegister">Sign up</a></p>
       </div>
-
-      <!-- Register Form -->
       <div class="form-register" id="registerForm">
         <h2>Create account</h2>
         <div class="form-group">
@@ -239,32 +212,27 @@
     </div>
   </div>
 
-  <!-- Footer -->
   <footer class="footer">
     ChromeWeb &copy; 2026 — <a href="#">GitHub</a> · <a href="#">Twitter</a> · <a href="#">Discord</a>
   </footer>
 
-  <!-- Scripts -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.globe.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.dots.min.js"></script>
   <script>
-    // ---- Vanta backgrounds ----
     VANTA.GLOBE({ el: "#vanta-bg", mouseControls: true, touchControls: true, gyroControls: false, minHeight: 200.00, minWidth: 200.00, scale: 1.00, scaleMobile: 1.00, color: 0xeeeeee, size: 2.00, backgroundColor: 0x0 });
     VANTA.DOTS({ el: "#vanta-dots", mouseControls: false, touchControls: false, gyroControls: false, minHeight: 200.00, minWidth: 200.00, scale: 1.00, scaleMobile: 1.00, color: 0xd7d7d7, color2: 0xd7d7d7, size: 1.60, spacing: 15.00, showLines: false, backgroundColor: 0x0 });
     VANTA.GLOBE({ el: "#vanta-bg-light", mouseControls: false, touchControls: false, gyroControls: false, minHeight: 200.00, minWidth: 200.00, scale: 1.00, scaleMobile: 1.00, color: 0x1b191a, color2: 0xf0e0e, size: 0.90, backgroundColor: 0xf7f7f7 });
     VANTA.DOTS({ el: "#vanta-dots-light", mouseControls: false, touchControls: false, gyroControls: false, minHeight: 200.00, minWidth: 200.00, scale: 1.00, scaleMobile: 1.00, color: 0x141313, color2: 0x80808, size: 1.60, spacing: 15.00, showLines: false, backgroundColor: 0xf7f2f2 });
 
-    // ---- Theme Toggle ----
     const html = document.documentElement;
     const toggleBtn = document.getElementById('themeToggle');
     const darkBg = document.getElementById('vanta-bg');
     const darkDots = document.getElementById('vanta-dots');
     const lightBg = document.getElementById('vanta-bg-light');
     const lightDots = document.getElementById('vanta-dots-light');
-
-    function applyTheme(theme) {
-      if (theme === 'light') {
+    function applyTheme(t) {
+      if (t === 'light') {
         darkBg.style.display = 'none'; darkDots.style.display = 'none';
         lightBg.style.display = 'block'; lightDots.style.display = 'block';
       } else {
@@ -273,157 +241,95 @@
       }
       window.dispatchEvent(new Event('resize'));
     }
-
     const savedTheme = localStorage.getItem('theme') || 'dark';
     html.setAttribute('data-theme', savedTheme);
     applyTheme(savedTheme);
-
     toggleBtn.addEventListener('click', () => {
-      const current = html.getAttribute('data-theme');
-      const newTheme = current === 'dark' ? 'light' : 'dark';
-      html.setAttribute('data-theme', newTheme);
-      localStorage.setItem('theme', newTheme);
-      applyTheme(newTheme);
+      const cur = html.getAttribute('data-theme');
+      const next = cur === 'dark' ? 'light' : 'dark';
+      html.setAttribute('data-theme', next);
+      localStorage.setItem('theme', next);
+      applyTheme(next);
     });
 
-    // ---- Form toggle between login / register ----
-    const loginForm = document.getElementById('loginForm');
-    const registerForm = document.getElementById('registerForm');
     document.getElementById('showRegister').addEventListener('click', (e) => {
       e.preventDefault();
-      loginForm.classList.remove('active');
-      registerForm.classList.add('active');
+      document.getElementById('loginForm').classList.remove('active');
+      document.getElementById('registerForm').classList.add('active');
     });
     document.getElementById('showLogin').addEventListener('click', (e) => {
       e.preventDefault();
-      registerForm.classList.remove('active');
-      loginForm.classList.add('active');
+      document.getElementById('registerForm').classList.remove('active');
+      document.getElementById('loginForm').classList.add('active');
     });
 
-    // ---- LocalStorage Auth Helpers ----
-    function getUsers() {
-      return JSON.parse(localStorage.getItem('chromeweb_users') || '[]');
+    function getUsers() { return JSON.parse(localStorage.getItem('chromeweb_users') || '[]'); }
+    function saveUsers(u) { localStorage.setItem('chromeweb_users', JSON.stringify(u)); }
+    async function hashPassword(pw) {
+      const data = new TextEncoder().encode(pw);
+      const hash = await crypto.subtle.digest('SHA-256', data);
+      return Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2,'0')).join('');
     }
-    function saveUsers(users) {
-      localStorage.setItem('chromeweb_users', JSON.stringify(users));
-    }
-
-    // Simple hash using Web Crypto (async, returns hex string)
-    async function hashPassword(password) {
-      const encoder = new TextEncoder();
-      const data = encoder.encode(password);
-      const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-      const hashArray = Array.from(new Uint8Array(hashBuffer));
-      return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-    }
-
     function generateToken() {
-      // random 32-byte hex string
-      return [...crypto.getRandomValues(new Uint8Array(32))]
-        .map(b => b.toString(16).padStart(2, '0'))
-        .join('');
+      return [...crypto.getRandomValues(new Uint8Array(32))].map(b => b.toString(16).padStart(2,'0')).join('');
     }
 
-    // ---- Registration ----
     document.getElementById('registerBtn').addEventListener('click', async () => {
       const username = document.getElementById('regUser').value.trim();
       const email = document.getElementById('regEmail').value.trim();
       const password = document.getElementById('regPassword').value;
-
-      if (!username || !email || !password) {
-        alert('All fields are required.');
-        return;
-      }
-      if (password.length < 6) {
-        alert('Password must be at least 6 characters.');
-        return;
-      }
-
+      if (!username || !email || !password) return alert('All fields required.');
+      if (password.length < 6) return alert('Password must be at least 6 characters.');
       const users = getUsers();
-      if (users.find(u => u.email === email)) {
-        alert('Email already registered.');
-        return;
-      }
-
-      const hashedPw = await hashPassword(password);
+      if (users.find(u => u.email === email)) return alert('Email already registered.');
+      const hashed = await hashPassword(password);
       const token = generateToken();
-      const newUser = {
-        id: crypto.randomUUID(),
-        username,
-        email,
-        password: hashedPw,
-        token,
-        createdAt: new Date().toISOString()
-      };
-
+      const newUser = { id: crypto.randomUUID(), username, email, password: hashed, token, createdAt: new Date().toISOString() };
       users.push(newUser);
       saveUsers(users);
-
-      // Auto-login: save token
       localStorage.setItem('chromeweb_token', token);
-      alert('Account created! You are now logged in.');
-      window.location.href = '/app'; // redirect to dashboard
+      alert('Account created! Logging in...');
+      window.location.href = 'index.html';
     });
 
-    // ---- Login ----
     document.getElementById('loginBtn').addEventListener('click', async () => {
       const email = document.getElementById('loginEmail').value.trim();
       const password = document.getElementById('loginPassword').value;
-
-      if (!email || !password) {
-        alert('Email and password are required.');
-        return;
-      }
-
+      if (!email || !password) return alert('Email and password required.');
       const users = getUsers();
       const user = users.find(u => u.email === email);
-      if (!user) {
-        alert('Invalid email or password.');
-        return;
-      }
-
+      if (!user) return alert('Invalid credentials.');
       const hashedInput = await hashPassword(password);
-      if (hashedInput !== user.password) {
-        alert('Invalid email or password.');
-        return;
-      }
-
-      // Generate new token and update user record
+      if (hashedInput !== user.password) return alert('Invalid credentials.');
       const token = generateToken();
       user.token = token;
       saveUsers(users);
-
       localStorage.setItem('chromeweb_token', token);
-      alert('Logged in successfully.');
-      window.location.href = '/app';
+      alert('Logged in!');
+      window.location.href = 'index.html';
     });
 
-    // ---- 3D tilt on card (flashy) ----
     const card = document.getElementById('accountsCard');
     card.addEventListener('mousemove', (e) => {
-      const rect = card.getBoundingClientRect();
-      const x = e.clientX - rect.left;
-      const y = e.clientY - rect.top;
-      const rotateY = ((x - rect.width/2) / (rect.width/2)) * 4;
-      const rotateX = ((y - rect.height/2) / (rect.height/2)) * -4;
-      card.style.transform = `perspective(800px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+      const r = card.getBoundingClientRect();
+      const x = e.clientX - r.left, y = e.clientY - r.top;
+      const rY = ((x - r.width/2) / (r.width/2)) * 4;
+      const rX = ((y - r.height/2) / (r.height/2)) * -4;
+      card.style.transform = `perspective(800px) rotateX(${rX}deg) rotateY(${rY}deg)`;
     });
-    card.addEventListener('mouseleave', () => {
-      card.style.transform = 'perspective(800px) rotateX(0deg) rotateY(0deg)';
-    });
+    card.addEventListener('mouseleave', () => { card.style.transform = 'perspective(800px) rotateX(0deg) rotateY(0deg)'; });
 
-    // If already logged in, redirect to dashboard
-    if (localStorage.getItem('chromeweb_token')) {
-      // Optional: verify token still valid (by finding user with that token)
-      const users = getUsers();
+    (function() {
       const token = localStorage.getItem('chromeweb_token');
-      if (users.find(u => u.token === token)) {
-        window.location.href = '/app';
-      } else {
-        // Token invalid, clear it
-        localStorage.removeItem('chromeweb_token');
+      if (token) {
+        const users = getUsers();
+        if (users.find(u => u.token === token)) {
+          window.location.href = 'index.html';
+        } else {
+          localStorage.removeItem('chromeweb_token');
+        }
       }
-    }
+    })();
   </script>
 </body>
 </html>
