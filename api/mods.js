@@ -1,4 +1,3 @@
-// /api/mods.js
 const https = require('https');
 
 const NEON_API_KEY = process.env.NEON_API_KEY;
@@ -21,45 +20,60 @@ function executeQuery(sql, params = []) {
       let data = '';
       res.on('data', chunk => data += chunk);
       res.on('end', () => {
-        try { resolve(JSON.parse(data)); } catch (e) { reject(e); }
+        try {
+          const json = JSON.parse(data);
+          if (res.statusCode >= 400) {
+            console.error('Neon error:', json);
+            reject(new Error(json.message || 'Database error'));
+          } else {
+            resolve(json);
+          }
+        } catch (e) {
+          reject(e);
+        }
       });
     });
-    req.on('error', reject);
+    req.on('error', (e) => reject(e));
     req.write(body);
     req.end();
   });
 }
 
 module.exports = async function handler(req, res) {
-  // Ensure the mods table exists
-  await executeQuery(`
-    CREATE TABLE IF NOT EXISTS mods (
-      id UUID DEFAULT gen_random_uuid(),
-      name TEXT NOT NULL,
-      description TEXT,
-      author TEXT NOT NULL,
-      type TEXT CHECK (type IN ('css', 'js', 'html')),
-      content TEXT NOT NULL,
-      created_at TIMESTAMPTZ DEFAULT now()
-    )
-  `).catch(console.error);
+  try {
+    // Ensure table exists
+    await executeQuery(`
+      CREATE TABLE IF NOT EXISTS mods (
+        id UUID DEFAULT gen_random_uuid(),
+        name TEXT NOT NULL,
+        description TEXT,
+        author TEXT NOT NULL,
+        type TEXT CHECK (type IN ('css', 'js', 'html')),
+        content TEXT NOT NULL,
+        created_at TIMESTAMPTZ DEFAULT now()
+      )
+    `);
 
-  if (req.method === 'GET') {
-    const result = await executeQuery('SELECT * FROM mods ORDER BY created_at DESC');
-    return res.status(200).json(result.rows);
-  }
-
-  if (req.method === 'POST') {
-    const { name, description, author, type, content } = req.body;
-    if (!name || !author || !type || !content) {
-      return res.status(400).json({ error: 'Missing required fields' });
+    if (req.method === 'GET') {
+      const result = await executeQuery('SELECT * FROM mods ORDER BY created_at DESC');
+      return res.status(200).json(result.rows);
     }
-    const result = await executeQuery(
-      'INSERT INTO mods (name, description, author, type, content) VALUES ($1, $2, $3, $4, $5) RETURNING *',
-      [name, description, author, type, content]
-    );
-    return res.status(201).json(result.rows[0]);
-  }
 
-  return res.status(405).json({ error: 'Method not allowed' });
+    if (req.method === 'POST') {
+      const { name, description, author, type, content } = req.body;
+      if (!name || !author || !type || !content) {
+        return res.status(400).json({ error: 'Missing required fields' });
+      }
+      const result = await executeQuery(
+        'INSERT INTO mods (name, description, author, type, content) VALUES ($1, $2, $3, $4, $5) RETURNING *',
+        [name, description, author, type, content]
+      );
+      return res.status(201).json(result.rows[0]);
+    }
+
+    return res.status(405).json({ error: 'Method not allowed' });
+  } catch (err) {
+    console.error('API error:', err);
+    return res.status(500).json({ error: err.message || 'Internal server error' });
+  }
 };
