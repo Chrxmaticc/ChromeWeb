@@ -675,8 +675,8 @@
     // Bookmarklets list
     const bookmarklets = [
       { name:'Night Mode', desc:'Instant dark background.', code:'javascript:(function(){var l=document.createElement("link");l.rel="stylesheet";l.href="https://chromeweb.vercel.app/cdn/themes/night.css";document.head.appendChild(l);})();' },
-      { name:'Text Enhancer', desc:'Gradient text on any page.', code:'javascript:(function(){var s=document.createElement("script");s.src="https://chromeweb.vercel.app/cdn/scripts/text-enhancer.js";document.head.appendChild(s);})();' },
-      { name:'Font Changer', desc:'Change fonts instantly.', code:'javascript:(function(){var s=document.createElement("script");s.src="https://chromeweb.vercel.app/cdn/scripts/font-changer.js";document.head.appendChild(s);})();' },
+      { name:'ChromeTxt Enhancer', desc:'Gradient text on any page.', code:'javascript:(function(){var s=document.createElement("script");s.src="https://chromeweb.vercel.app/cdn/scripts/ChromeTxt-Enhancer.js";document.head.appendChild(s);})();' },
+      { name:'Font Changer', desc:'Change fonts instantly.', code:'javascript:(function(){var s=document.createElement("script");s.src="https://chromeweb.vercel.app/cdn/scripts/ChromeFont-Changer.js";document.head.appendChild(s);})();' },
       { name:'Audio Player', desc:'Floating music widget.', code:'javascript:(function(){var s=document.createElement("script");s.src="https://chromeweb.vercel.app/cdn/scripts/audio-player.js";document.head.appendChild(s);})();' }
     ];
     document.getElementById('bookmarkletList').innerHTML = bookmarklets.map(b => `<div class="glass-card">
