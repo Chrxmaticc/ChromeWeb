@@ -339,7 +339,7 @@
             </div>
             <div style="display:flex; gap:0.5rem; margin-top:1rem;">
               <input type="text" id="trackUrlInput" placeholder="Audio URL (mp3/wav/ogg)" style="flex:1;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:0.5rem;color:#fff;">
-              <input type="file" id="audioFileInput" accept="audio/*" style="display:none;" onchange="handleFileSelect(event)">
+              <input type="file" id="audioFileInput" accept=".mp3,.wav,.ogg,.flac,.aac" style="display:none;" onchange="handleFileSelect(event)">
               <button id="uploadAudioBtn" style="padding:0.5rem 1rem;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);color:#fff;border-radius:8px;font-weight:600;cursor:pointer;" onclick="document.getElementById('audioFileInput').click()">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
               </button>
