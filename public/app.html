@@ -76,17 +76,38 @@
     .panel { display:none; flex:1; flex-direction:column; }
     .panel.active { display:flex; }
 
-    /* Liquid glass card base */
+    /* Liquid Glass card – based on the original component */
     .glass-card {
+      position: relative;
       background: rgba(18,18,18,0.55); backdrop-filter: blur(16px);
       border:1px solid rgba(192,192,192,0.15); border-radius:1.5rem;
       padding:1.5rem; margin-bottom:1rem;
       box-shadow:0 20px 30px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.06);
-      transition: all 0.3s;
+      transition: transform 0.2s ease-out, border-color 0.3s;
+      transform-style: preserve-3d;
+      overflow: hidden;
     }
+    .glass-card::after {
+      content: '';
+      position: absolute; inset:0; z-index:20; pointer-events:none;
+      border-radius: inherit;
+      background: linear-gradient(to right, transparent, rgba(255,255,255,0.05), transparent);
+      opacity:0; transition: opacity 0.2s ease-out;
+    }
+    .glass-card:hover::after { opacity:1; }
     .glass-card:hover { border-color: rgba(192,192,192,0.4); }
-    .glass-card h3 { font-size:1.1rem; font-weight:600; margin-bottom:0.5rem; color:#fff; }
-    .glass-card p { color:#b0b0b0; font-size:0.85rem; }
+
+    /* Shimmer text */
+    .shimmer-text {
+      background: linear-gradient(90deg, #ffffff 0%, #c0c0c0 50%, #ffffff 100%);
+      background-size: 200% 100%;
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      animation: shimmer 2.5s linear infinite;
+      font-weight: 800;
+    }
+    @keyframes shimmer { 0% { background-position: 200% center; } 100% { background-position: -200% center; } }
 
     /* Dashboard specific grid */
     .top-horizontal-bar {
@@ -111,7 +132,7 @@
     .tab-band > div {
       background: rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.06);
       border-radius:10px; display:flex; align-items:center; justify-content:center;
-      font-size:0.8rem; color:#aaa;
+      font-size:0.8rem; color:#aaa; gap:0.5rem;
     }
     .upper-main-grid {
       display:grid; grid-template-columns:1fr 1fr; gap:1.5rem; flex:1;
@@ -125,9 +146,6 @@
     }
     .kpi-card .kpi-value { font-size:2.5rem; font-weight:800; color:#c0c0c0; }
     .kpi-card .kpi-label { font-size:0.8rem; color:#888; text-transform:uppercase; letter-spacing:0.1em; }
-    .upper-right {
-      display:flex;
-    }
     .map-placeholder {
       flex:1; background: radial-gradient(circle, #1a1a1a, #0a0a0a);
       display:flex; align-items:center; justify-content:center;
@@ -136,25 +154,22 @@
     .lower-main-grid {
       display:grid; grid-template-columns:repeat(3,1fr); gap:1.5rem; flex:1;
     }
-    .lower-main-grid > div {
-      min-height:200px; overflow-y:auto;
-    }
+    .lower-main-grid > div { min-height:200px; overflow-y:auto; }
 
-    /* Music player enhancements */
+    /* Music player */
     .music-player {
       background: rgba(18,18,18,0.55); backdrop-filter: blur(16px);
       border:1px solid rgba(192,192,192,0.15); border-radius:2rem;
       padding:2rem; max-width:400px; margin:0 auto;
       box-shadow:0 30px 60px rgba(0,0,0,0.8);
+      position: relative;
     }
     .music-player .cover { width:100%; aspect-ratio:1/1; border-radius:1.5rem; background:linear-gradient(135deg,#222,#111); display:flex; align-items:center; justify-content:center; margin-bottom:1.5rem; overflow:hidden; }
     .music-player .cover img { width:100%; height:100%; object-fit:cover; }
     .progress-bar { height:4px; background:#333; border-radius:2px; overflow:hidden; cursor:pointer; }
     .progress-fill { height:100%; background:linear-gradient(to right, #c0c0c0, #e0e0e0); width:0%; transition: width 0.1s linear; }
 
-    /* Universal panel */
-    .color-picker-row { display:flex; gap:1rem; align-items:center; margin-top:0.5rem; }
-
+    /* Settings etc */
     .setting-row {
       display:flex; justify-content:space-between; align-items:center;
       padding:0.8rem 0; border-bottom:1px solid rgba(255,255,255,0.05);
@@ -170,7 +185,7 @@
     }
     .toggle-switch.on::after { left: 20px; }
 
-    /* Light mode overrides */
+    /* Light mode */
     [data-theme="light"] body { background:#f7f7f7; }
     [data-theme="light"] .topbar { background:rgba(255,255,255,0.85); border-bottom-color:rgba(0,0,0,0.1); }
     [data-theme="light"] .topbar .logo span { background:linear-gradient(135deg,#333,#555); -webkit-background-clip:text; background-clip:text; }
@@ -227,25 +242,38 @@
       <button data-panel="bookmarklets"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 2l14 9-14 9V2z"/></svg><span>Bookmarklets</span></button>
       <button data-panel="codetools"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg><span>Code Tools</span></button>
       <button data-panel="universal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg><span>ChromeUniversal</span></button>
+      <button data-panel="cdnlibrary"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg><span>CDN Library</span></button>
       <button data-panel="settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v2m0 18v2M4.22 4.22l1.42 1.42m12.72 12.72l1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg><span>Settings</span></button>
     </aside>
 
     <main class="content-area" id="mainContent">
-      <!-- Dashboard Panel (now filled with live data) -->
+      <!-- Dashboard Panel -->
       <div class="panel active" id="panel-dashboard">
         <div class="top-horizontal-bar">
-          <span>Dashboard Overview</span>
+          <span class="shimmer-text" style="font-size:1.2rem;">Make everything impossible, possible</span>
           <span id="dashboardUser">Welcome, user</span>
         </div>
         <div class="dashboard-body">
           <div class="control-strip">
-            <div class="control-block-left">📊 Real‑time Stats</div>
+            <div class="control-block-left">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+              Real‑time Stats
+            </div>
             <div class="control-block-right" id="currentDate"></div>
           </div>
           <div class="tab-band">
-            <div>📁 Mods</div>
-            <div>⚡ Quick Actions</div>
-            <div>🔖 Bookmarks</div>
+            <div>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+              Mods
+            </div>
+            <div>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+              Quick Actions
+            </div>
+            <div>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 2l14 9-14 9V2z"/></svg>
+              Bookmarks
+            </div>
           </div>
           <div class="upper-main-grid">
             <div class="upper-left-grid">
@@ -289,10 +317,10 @@
         </div>
       </div>
 
-      <!-- Music Player Panel (enhanced) -->
+      <!-- Music Player Panel -->
       <div class="panel" id="panel-music">
         <div class="dashboard-body" style="align-items:center;justify-content:center;">
-          <div class="music-player">
+          <div class="music-player" id="musicPlayerWidget">
             <div class="cover" id="musicCover"><svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="1.5"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></div>
             <div id="musicTitle" style="font-weight:600;text-align:center;">vax - rod</div>
             <div id="musicArtist" style="font-size:0.85rem;color:#aaa;text-align:center;">ChromeWeb OST</div>
@@ -310,9 +338,11 @@
               <input type="range" id="volumeSlider" min="0" max="1" step="0.01" value="0.8" style="flex:1;">
             </div>
             <div style="display:flex; gap:0.5rem; margin-top:1rem;">
-              <input type="text" id="trackUrlInput" placeholder="Audio URL or file" style="flex:1;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:0.5rem;color:#fff;">
+              <input type="text" id="trackUrlInput" placeholder="Audio URL (mp3/wav/ogg)" style="flex:1;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:0.5rem;color:#fff;">
               <input type="file" id="audioFileInput" accept="audio/*" style="display:none;" onchange="handleFileSelect(event)">
-              <button id="uploadAudioBtn" style="padding:0.5rem 1rem;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);color:#fff;border-radius:8px;font-weight:600;cursor:pointer;" onclick="document.getElementById('audioFileInput').click()">📁</button>
+              <button id="uploadAudioBtn" style="padding:0.5rem 1rem;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);color:#fff;border-radius:8px;font-weight:600;cursor:pointer;" onclick="document.getElementById('audioFileInput').click()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+              </button>
               <button id="addTrackBtn" style="padding:0.5rem 1rem;background:linear-gradient(135deg,#e0e0e0,#808080);color:#0a0a0a;border:none;border-radius:8px;font-weight:600;">Add</button>
             </div>
             <div style="margin-top:1rem;font-size:0.8rem;color:#aaa;">Playlist (<span id="playlistCount">0</span> tracks)</div>
@@ -359,6 +389,15 @@
         </div>
       </div>
 
+      <!-- CDN Library Panel -->
+      <div class="panel" id="panel-cdnlibrary">
+        <div class="dashboard-body">
+          <h2>ChromeWeb CDN Library</h2>
+          <p style="color:#aaa;margin-bottom:1.5rem;">Publicly hosted themes, scripts, and assets. Copy the link and inject via bookmarklet.</p>
+          <div id="cdnList" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:1.5rem;"></div>
+        </div>
+      </div>
+
       <!-- Settings Panel -->
       <div class="panel" id="panel-settings">
         <div class="dashboard-body">
@@ -378,6 +417,17 @@
       </div>
     </main>
   </div>
+
+  <!-- Hidden SVG filter for liquid glass distortion (optional) -->
+  <svg style="display:none;" aria-hidden="true">
+    <defs>
+      <filter id="glassFilter" color-interpolation-filters="sRGB" height="200%" width="200%" x="-50%" y="-50%">
+        <feTurbulence type="fractalNoise" baseFrequency="0.05 0.05" numOctaves="1" seed="1" result="turbulence"/>
+        <feGaussianBlur in="turbulence" stdDeviation="2" result="blurredNoise"/>
+        <feDisplacementMap in="SourceGraphic" in2="blurredNoise" scale="30" xChannelSelector="R" yChannelSelector="B"/>
+      </filter>
+    </defs>
+  </svg>
 
   <!-- Scripts -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
@@ -436,7 +486,57 @@
         document.getElementById(`panel-${panelId}`).classList.add('active');
         if (panelId === 'discover') loadDiscover();
         if (panelId === 'dashboard') refreshDashboardStats();
+        if (panelId === 'cdnlibrary') loadCdnLibrary();
       });
+    });
+
+    // 3D tilt for all glass cards
+    document.querySelectorAll('.glass-card').forEach(card => {
+      card.addEventListener('mousemove', (e) => {
+        const rect = card.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        const centerX = rect.width / 2, centerY = rect.height / 2;
+        const rotateX = ((y - centerY) / centerY) * -5;
+        const rotateY = ((x - centerX) / centerX) * 5;
+        card.style.transform = `perspective(800px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+      });
+      card.addEventListener('mouseleave', () => {
+        card.style.transform = 'perspective(800px) rotateX(0deg) rotateY(0deg)';
+      });
+    });
+
+    // Make music player draggable
+    const musicPlayer = document.getElementById('musicPlayerWidget');
+    let isDragging = false, startX, startY, initialLeft, initialTop;
+    musicPlayer.addEventListener('mousedown', (e) => {
+      if (e.target.closest('button, input')) return;
+      isDragging = true;
+      startX = e.clientX;
+      startY = e.clientY;
+      const rect = musicPlayer.getBoundingClientRect();
+      initialLeft = rect.left;
+      initialTop = rect.top;
+      musicPlayer.style.position = 'fixed';
+      musicPlayer.style.zIndex = 10000;
+      musicPlayer.style.cursor = 'grabbing';
+      e.preventDefault();
+    });
+    window.addEventListener('mousemove', (e) => {
+      if (!isDragging) return;
+      const dx = e.clientX - startX;
+      const dy = e.clientY - startY;
+      musicPlayer.style.left = (initialLeft + dx) + 'px';
+      musicPlayer.style.top = (initialTop + dy) + 'px';
+      musicPlayer.style.right = 'auto';
+      musicPlayer.style.bottom = 'auto';
+      musicPlayer.style.margin = '0';
+    });
+    window.addEventListener('mouseup', () => {
+      if (isDragging) {
+        isDragging = false;
+        musicPlayer.style.cursor = '';
+      }
     });
 
     // Dashboard live data
@@ -445,37 +545,29 @@
       document.getElementById('kpiMods').textContent = installed.length;
       const bmCount = parseInt(localStorage.getItem('bookmarklets_generated') || '0');
       document.getElementById('kpiBookmarklets').textContent = bmCount;
-      // Fetch community mods count (cached)
       fetch('/api/mods').then(r => r.json()).then(mods => {
         document.getElementById('kpiDiscover').textContent = mods.length;
       }).catch(() => {});
 
-      // Recent mods
       const recentModsDiv = document.getElementById('recentModsList');
       recentModsDiv.innerHTML = installed.length ? installed.slice(-5).reverse().map(m => `<div style="margin-bottom:0.3rem;">• ${m.name} (${m.type})</div>`).join('') : '<div style="color:#888;">No mods installed yet.</div>';
 
-      // Activity feed
       const activity = JSON.parse(localStorage.getItem('activity_log') || '[]');
       document.getElementById('activityFeed').innerHTML = activity.length ? activity.slice(-5).reverse().map(a => `<div>${a}</div>`).join('') : '<div>No recent activity.</div>';
 
-      // Top themes (placeholder)
       document.getElementById('topThemes').innerHTML = '<div style="color:#888;">Coming soon...</div>';
     }
-    // Initial load
     refreshDashboardStats();
-    // Set user name in top bar
     const user = (function() {
       const token = localStorage.getItem('chromeweb_token');
       if (!token) return null;
       const users = JSON.parse(localStorage.getItem('chromeweb_users') || '[]');
       return users.find(u => u.token === token);
     })();
-    if (user) {
-      document.getElementById('dashboardUser').textContent = `Welcome, ${user.username}`;
-    }
+    if (user) document.getElementById('dashboardUser').textContent = `Welcome, ${user.username}`;
     document.getElementById('currentDate').textContent = new Date().toLocaleDateString();
 
-    // Music player
+    // Music player logic (unchanged, only added file input accept audio only)
     const audio = document.getElementById('audioPlayer');
     let playlist = [];
     let currentTrackIndex = -1;
@@ -527,7 +619,16 @@
     audio.addEventListener('play', updatePlayIcon); audio.addEventListener('pause', updatePlayIcon);
     audio.addEventListener('ended', () => { if(repeatMode==='one'){ audio.currentTime=0; audio.play(); } else nextTrack(); });
 
-    // Add track from URL or file
+    function addTrackToPlaylist(url, name) {
+      const trackName = name || prompt('Track name (optional):') || url.split('/').pop();
+      const artist = prompt('Artist (optional):') || '';
+      const cover = prompt('Cover image URL (optional):') || '';
+      playlist.push({url, name: trackName, artist, cover});
+      updatePlaylistCount();
+      if(currentTrackIndex===-1) loadTrack(0);
+      document.getElementById('trackUrlInput').value = '';
+    }
+
     document.getElementById('addTrackBtn').addEventListener('click', () => {
       const url = document.getElementById('trackUrlInput').value.trim();
       if(url) addTrackToPlaylist(url);
@@ -539,15 +640,6 @@
         addTrackToPlaylist(objectURL, file.name);
       }
     };
-    function addTrackToPlaylist(url, name) {
-      const trackName = name || prompt('Track name (optional):') || url.split('/').pop();
-      const artist = prompt('Artist (optional):') || '';
-      const cover = prompt('Cover image URL (optional):') || '';
-      playlist.push({url, name: trackName, artist, cover});
-      updatePlaylistCount();
-      if(currentTrackIndex===-1) loadTrack(0);
-      document.getElementById('trackUrlInput').value = '';
-    }
 
     // Discover panel
     async function loadDiscover() {
@@ -566,14 +658,11 @@
           const decoded = decodeURIComponent(content);
           const installed = JSON.parse(localStorage.getItem('installed_mods')||'[]');
           if(!installed.find(m=>m.name===name)){ installed.push({name,type}); localStorage.setItem('installed_mods',JSON.stringify(installed)); }
-          // Increment bookmarklet counter
           let count = parseInt(localStorage.getItem('bookmarklets_generated')||'0') + 1;
           localStorage.setItem('bookmarklets_generated', count);
-          // Log activity
           const activity = JSON.parse(localStorage.getItem('activity_log')||'[]');
           activity.push(`Installed "${name}" at ${new Date().toLocaleTimeString()}`);
           localStorage.setItem('activity_log', JSON.stringify(activity));
-          // Generate bookmarklet
           let bm = ''; if(type==='css') bm = 'javascript:(function(){var s=document.createElement("style");s.textContent='+JSON.stringify(decoded)+';document.head.appendChild(s);})();';
           else if(type==='js') bm = 'javascript:(function(){'+decoded+'})();';
           try { await navigator.clipboard.writeText(bm); alert('Bookmarklet copied to clipboard!'); } catch { prompt('Copy this bookmarklet:', bm); }
@@ -583,7 +672,7 @@
     }
     if(document.getElementById('panel-discover').classList.contains('active')) loadDiscover();
 
-    // Bookmarklets pre‑made list
+    // Bookmarklets list
     const bookmarklets = [
       { name:'Night Mode', desc:'Instant dark background.', code:'javascript:(function(){var l=document.createElement("link");l.rel="stylesheet";l.href="https://chromeweb.vercel.app/cdn/themes/night.css";document.head.appendChild(l);})();' },
       { name:'Text Enhancer', desc:'Gradient text on any page.', code:'javascript:(function(){var s=document.createElement("script");s.src="https://chromeweb.vercel.app/cdn/scripts/text-enhancer.js";document.head.appendChild(s);})();' },
@@ -631,6 +720,26 @@
       const bm = 'javascript:(function(){var s=document.createElement("style");s.textContent='+JSON.stringify(themeCSS)+';document.head.appendChild(s);})();';
       try { await navigator.clipboard.writeText(bm); alert('Universal theme bookmarklet copied!'); } catch { prompt('Copy:', bm); }
     });
+
+    // CDN Library
+    function loadCdnLibrary() {
+      const cdnFiles = [
+        { name: 'night.css', path: 'themes/night.css', desc: 'Universal dark mode' },
+        { name: 'midnight-silver.css', path: 'themes/midnight-silver.css', desc: 'Silver‑black theme' },
+        { name: 'text-enhancer.js', path: 'scripts/text-enhancer.js', desc: 'Gradient text injector' },
+        { name: 'font-changer.js', path: 'scripts/font-changer.js', desc: 'Font switcher' },
+        { name: 'audio-player.js', path: 'scripts/audio-player.js', desc: 'Floating music widget' },
+        { name: 'chromecord.css', path: 'themes/chromecord.css', desc: 'Discord Nitro feel' }
+      ];
+      const container = document.getElementById('cdnList');
+      container.innerHTML = cdnFiles.map(f => `<div class="glass-card">
+        <h3>${f.name}</h3>
+        <p style="font-size:0.8rem;">${f.desc}</p>
+        <input readonly value="https://chromeweb.vercel.app/cdn/${f.path}" style="width:100%;margin:0.5rem 0;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:6px;padding:0.3rem;color:#fff;font-size:0.7rem;" onclick="this.select()">
+        <button onclick="navigator.clipboard.writeText('https://chromeweb.vercel.app/cdn/${f.path}');alert('Copied!')" style="padding:0.2rem 0.5rem;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);color:#fff;border-radius:6px;cursor:pointer;">Copy Link</button>
+      </div>`).join('');
+    }
+    if(document.getElementById('panel-cdnlibrary').classList.contains('active')) loadCdnLibrary();
 
     // Settings
     const userInfoDiv = document.getElementById('userInfo');
