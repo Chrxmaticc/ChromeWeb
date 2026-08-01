@@ -11,7 +11,8 @@
     * { margin:0; padding:0; box-sizing:border-box; }
     body {
       font-family: 'Inter', system-ui, -apple-system, sans-serif;
-      background: #000; color: #fff; overflow-x: hidden; position: relative; min-height: 100vh;
+      background: #000; color: #fff; overflow-x: hidden;
+      min-height: 100vh; position: relative;
     }
     #vanta-bg, #vanta-bg-light { position:fixed; top:0; left:0; width:100vw; height:100vh; z-index:0; pointer-events:none; }
     #vanta-dots, #vanta-dots-light { position:fixed; top:0; left:0; width:100%; height:100%; z-index:1; pointer-events:none; opacity:0.3; }
@@ -46,85 +47,49 @@
     .toggle-label::after { content:'Light'; }
     [data-theme="light"] .toggle-label::after { content:'Dark'; }
 
-    .dashboard {
-      position:relative; z-index:2; max-width:1200px; margin:0 auto; padding:2rem 2rem 4rem;
+    .dashboard-layout { position:relative; z-index:2; display:flex; min-height:calc(100vh - 73px); }
+    .sidebar {
+      width:250px; background: rgba(10,10,10,0.7); backdrop-filter:blur(12px);
+      border-right:1px solid rgba(255,255,255,0.05); padding:2rem 1rem;
+      display:flex; flex-direction:column; gap:1rem;
     }
-    .shimmer-title {
-      font-size: clamp(2.5rem, 6vw, 4rem); font-weight:800; text-align:center; margin-bottom:1rem;
-      background: linear-gradient(90deg, #ffffff, #c0c0c0, #ffffff);
-      background-size: 200% 100%;
-      -webkit-background-clip:text; background-clip:text; color:transparent;
-      animation: shimmer 2.5s linear infinite;
+    .sidebar button {
+      background: transparent; border: none; color: #b0b0b0; font-size:1rem;
+      padding:0.75rem 1rem; border-radius:12px; cursor:pointer; text-align:left;
+      transition: all 0.2s; display:flex; align-items:center; gap:0.75rem;
     }
-    @keyframes shimmer { 0%{background-position:200% center} 100%{background-position:-200% center} }
+    .sidebar button svg { width:1.2rem; height:1.2rem; }
+    .sidebar button:hover, .sidebar button.active { background: rgba(255,255,255,0.06); color: #fff; }
+    .content-area { flex:1; padding:2rem; position:relative; overflow-y:auto; }
+    .panel { display:none; }
+    .panel.active { display:block; }
 
-    .user-section {
-      background: rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.06);
-      border-radius:20px; padding:1.5rem; margin-bottom:2rem; display:flex; align-items:center; gap:1rem;
-      backdrop-filter:blur(8px);
+    /* Music player */
+    .music-player {
+      background: rgba(18,18,18,0.55); backdrop-filter: blur(16px);
+      border:1px solid rgba(192,192,192,0.15); border-radius:2rem;
+      padding:2rem; max-width:400px; margin:0 auto;
+      box-shadow:0 30px 60px rgba(0,0,0,0.8);
     }
-    .user-section .avatar {
-      width:60px; height:60px; border-radius:50%; background:rgba(192,192,192,0.15);
-      display:flex; align-items:center; justify-content:center; font-weight:700; font-size:1.5rem; color:#c0c0c0;
+    .music-player .cover {
+      width:100%; aspect-ratio:1/1; border-radius:1.5rem;
+      background: linear-gradient(135deg, #222, #111);
+      display:flex; align-items:center; justify-content:center;
+      margin-bottom:1.5rem; overflow:hidden;
     }
-    .user-section h3 { color:#fff; margin-bottom:0.2rem; }
-    .user-section p { color:#b0b0b0; font-size:0.9rem; }
-    .logout-btn {
-      margin-left:auto; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.15); color:#fff;
-      padding:0.5rem 1.2rem; border-radius:9999px; cursor:pointer; transition:0.2s;
+    .music-player .cover img { width:100%; height:100%; object-fit:cover; }
+    .music-player .controls {
+      display:flex; justify-content:space-between; align-items:center; margin:1.5rem 0;
     }
-    .logout-btn:hover { background:rgba(255,255,255,0.1); }
-
-    .section-title {
-      font-size:1.8rem; font-weight:700; margin:2rem 0 1rem;
-      background: linear-gradient(135deg,#fff,#aaa); -webkit-background-clip:text; background-clip:text; color:transparent;
+    .music-player .controls button {
+      background: rgba(255,255,255,0.1); border: none; color: #fff;
+      width:40px; height:40px; border-radius:50%; display:flex; align-items:center;
+      justify-content:center; cursor:pointer; transition:0.2s;
     }
-    .mods-grid {
-      display:grid; grid-template-columns:repeat(auto-fit, minmax(250px,1fr)); gap:1.5rem; margin-bottom:2rem;
-    }
-    .mod-card {
-      background: rgba(18,18,18,0.55); backdrop-filter:blur(12px); border:1px solid rgba(192,192,192,0.15);
-      border-radius:1.5rem; padding:1.5rem; transition:border-color 0.3s, transform 0.2s;
-      display:flex; flex-direction:column; gap:0.8rem;
-    }
-    .mod-card:hover { border-color:#808080; transform:translateY(-3px); }
-    .mod-card svg { width:2rem; height:2rem; color:#c0c0c0; }
-    .mod-card h3 { font-size:1.2rem; color:#fff; }
-    .mod-card p { color:#b0b0b0; font-size:0.85rem; flex:1; }
-    .mod-card .install-btn {
-      background:linear-gradient(135deg,#e0e0e0,#808080); color:#0a0a0a; border:none;
-      padding:0.5rem 1rem; border-radius:9999px; font-weight:600; cursor:pointer; transition:0.2s; align-self:flex-start;
-    }
-    .mod-card .install-btn:hover { transform:scale(1.05); box-shadow:0 5px 15px rgba(192,192,192,0.2); }
-    .installed-badge {
-      background:rgba(192,192,192,0.2); color:#c0c0c0; padding:0.5rem 1rem; border-radius:9999px;
-      font-weight:600; font-size:0.8rem; align-self:flex-start;
-    }
-
-    .version-cards {
-      display:grid; grid-template-columns: repeat(auto-fit, minmax(280px,1fr)); gap:1.5rem; margin-bottom:2rem;
-    }
-    .version-card {
-      background: rgba(18,18,18,0.55); backdrop-filter:blur(12px); border:1px solid rgba(192,192,192,0.15);
-      border-radius:1.5rem; padding:1.5rem; display:flex; flex-direction:column; gap:1rem;
-    }
-    .version-card h3 { color:#fff; font-size:1.3rem; }
-    .version-card p { color:#b0b0b0; font-size:0.9rem; }
-    .code-block {
-      background:#0d0d0d; color:#c0c0c0; padding:1rem; border-radius:0.75rem; font-family:monospace; font-size:0.8rem; overflow-x:auto;
-      border:1px solid #333;
-    }
-    .copy-btn {
-      background:rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.2); color:#fff;
-      padding:0.4rem 1rem; border-radius:6px; cursor:pointer; align-self:flex-start; transition:0.2s;
-    }
-    .copy-btn:hover { background:rgba(255,255,255,0.2); }
-
-    .footer {
-      text-align:center; padding:20px; border-top:1px solid rgba(255,255,255,0.05);
-      color:rgba(255,255,255,0.2); font-size:0.8rem; position:relative; z-index:2;
-    }
-    .footer a { color:rgba(255,255,255,0.4); text-decoration:none; }
+    .music-player .controls button:hover { background: rgba(255,255,255,0.2); }
+    .progress-bar { height:4px; background:#333; border-radius:2px; overflow:hidden; cursor:pointer; }
+    .progress-fill { height:100%; background:linear-gradient(to right, #c0c0c0, #e0e0e0); width:0%; }
+    input, select, textarea { font-family:inherit; }
 
     /* Light mode overrides */
     [data-theme="light"] body { background:#f7f7f7; }
@@ -134,19 +99,13 @@
     [data-theme="light"] .topbar nav a:hover { color:#000; }
     [data-theme="light"] .theme-toggle-btn { background:rgba(0,0,0,0.05); border-color:rgba(0,0,0,0.15); color:#333; }
     [data-theme="light"] .theme-toggle-btn:hover { background:rgba(0,0,0,0.1); border-color:rgba(0,0,0,0.25); color:#000; }
-    [data-theme="light"] .user-section, [data-theme="light"] .mod-card, [data-theme="light"] .version-card { background:rgba(255,255,255,0.6); border-color:rgba(0,0,0,0.1); }
-    [data-theme="light"] .user-section h3, [data-theme="light"] .mod-card h3, [data-theme="light"] .version-card h3 { color:#222; }
-    [data-theme="light"] .user-section p, [data-theme="light"] .mod-card p, [data-theme="light"] .version-card p { color:#555; }
-    [data-theme="light"] .mod-card .install-btn { background:linear-gradient(135deg,#e0e0e0,#808080); }
-    [data-theme="light"] .code-block { background:#f0f0f0; color:#333; border-color:#ddd; }
-    [data-theme="light"] .footer { border-top-color:rgba(0,0,0,0.1); color:rgba(0,0,0,0.3); }
-    [data-theme="light"] .footer a { color:rgba(0,0,0,0.5); }
-    [data-theme="light"] .section-title { background:linear-gradient(135deg,#222,#888); -webkit-background-clip:text; background-clip:text; }
-    [data-theme="light"] .shimmer-title { background: linear-gradient(90deg, #222, #888, #222); background-size: 200% 100%; }
+    [data-theme="light"] .sidebar { background:rgba(255,255,255,0.6); }
+    [data-theme="light"] .sidebar button { color:#555; }
+    [data-theme="light"] .sidebar button:hover, [data-theme="light"] .sidebar button.active { background:rgba(0,0,0,0.05); color:#000; }
+    [data-theme="light"] .music-player { background:rgba(255,255,255,0.6); border-color:rgba(0,0,0,0.1); }
   </style>
 </head>
 <body>
-
   <div id="vanta-bg"></div>
   <div id="vanta-dots"></div>
   <div id="vanta-bg-light"></div>
@@ -179,55 +138,100 @@
     </nav>
   </header>
 
-  <div class="dashboard">
-    <h1 class="shimmer-title">Dashboard</h1>
+  <div class="dashboard-layout">
+    <aside class="sidebar">
+      <button class="active" data-panel="dashboard">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+        Dashboard
+      </button>
+      <button data-panel="store">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/></svg>
+        Store
+      </button>
+      <button data-panel="music">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+        Music Player
+      </button>
+      <button data-panel="settings">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v2m0 18v2M4.22 4.22l1.42 1.42m12.72 12.72l1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+        Settings
+      </button>
+    </aside>
 
-    <!-- User info or login prompt -->
-    <div class="user-section" id="userSection">
-      <div class="avatar" id="userInitial"></div>
-      <div>
-        <h3 id="userNameDisplay"></h3>
-        <p id="userEmailDisplay"></p>
+    <main class="content-area">
+      <!-- Dashboard Panel -->
+      <div class="panel active" id="panel-dashboard">
+        <h2 style="font-weight:700;margin-bottom:1rem;">Mod Manager</h2>
+        <div id="installedMods" style="display:flex;flex-direction:column;gap:0.5rem;"></div>
+        <button id="publishModBtn" style="margin-top:1rem;padding:0.5rem 1rem;background:linear-gradient(135deg,#e0e0e0,#808080);color:#0a0a0a;border:none;border-radius:8px;font-weight:600;cursor:pointer;">Publish New Mod to Database</button>
       </div>
-      <button class="logout-btn" id="logoutBtn">Log Out</button>
-    </div>
 
-    <!-- Prebuilt Mods -->
-    <h2 class="section-title">Prebuilt Mods</h2>
-    <div class="mods-grid" id="prebuiltModsContainer">
-      <!-- generated by JS -->
-    </div>
+      <!-- Store Panel (redirect card) -->
+      <div class="panel" id="panel-store" style="text-align:center;padding-top:5rem;">
+        <h2 style="font-weight:700;margin-bottom:1rem;">ChromeWeb Marketplace</h2>
+        <p style="color:#b0b0b0;margin-bottom:2rem;">Browse community mods, themes, and plugins.</p>
+        <a href="store.html" style="display:inline-flex;align-items:center;gap:0.5rem;padding:0.8rem 2rem;background:linear-gradient(135deg,#e0e0e0,#808080);color:#0a0a0a;border-radius:9999px;font-weight:600;text-decoration:none;">
+          Open Store
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
+        </a>
+      </div>
 
-    <!-- Supported Versions -->
-    <h2 class="section-title">Supported Versions</h2>
-    <div class="version-cards">
-      <div class="version-card">
-        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
-        <h3>Bookmarklet</h3>
-        <p>Run ChromeWeb directly from a bookmark. Works on any page.</p>
-        <div class="code-block" id="bookmarkletCode">javascript:(function(){var s=document.createElement('script');s.src='https://cdn.chromeweb.app/loader.js';document.head.appendChild(s);})();</div>
-        <button class="copy-btn" onclick="copyCode('bookmarkletCode')">Copy Code</button>
+      <!-- Music Player Panel -->
+      <div class="panel" id="panel-music">
+        <div class="music-player">
+          <div class="cover" id="musicCover">
+            <!-- default music icon SVG -->
+            <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="1.5"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+          </div>
+          <div id="musicTitle" style="font-weight:600;text-align:center;margin-bottom:0.25rem;">No track loaded</div>
+          <div id="musicArtist" style="font-size:0.85rem;color:#aaa;text-align:center;"></div>
+          <div class="progress-bar" id="musicProgress" style="margin:1rem 0 0.5rem;">
+            <div class="progress-fill" id="musicProgressFill"></div>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:0.75rem;color:#aaa;margin-bottom:1rem;">
+            <span id="currentTime">0:00</span>
+            <span id="duration">0:00</span>
+          </div>
+          <div class="controls">
+            <button id="repeatBtn" title="Repeat: off">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 1l4 4-4 4"/><path d="M3 11V9a4 4 0 014-4h14"/><path d="M7 23l-4-4 4-4"/><path d="M21 13v2a4 4 0 01-4 4H3"/></svg>
+            </button>
+            <button id="prevBtn">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="19 20 9 12 19 4 19 20"/><line x1="5" y1="19" x2="5" y2="5"/></svg>
+            </button>
+            <button id="playPauseBtn" style="width:56px;height:56px;">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M6 4l15 8-15 8z"/></svg>
+            </button>
+            <button id="nextBtn">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 4 15 12 5 20 5 4"/><line x1="19" y1="5" x2="19" y2="19"/></svg>
+            </button>
+            <button id="shuffleBtn" title="Shuffle: off">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/><line x1="4" y1="4" x2="9" y2="9"/></svg>
+            </button>
+          </div>
+          <div style="display:flex;align-items:center;gap:0.5rem;margin-top:1rem;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M19.07 4.93a10 10 0 010 14.14M15.54 8.46a5 5 0 010 7.07"/></svg>
+            <input type="range" id="volumeSlider" min="0" max="1" step="0.01" value="0.8" style="flex:1;">
+          </div>
+          <div style="display:flex;gap:0.5rem;margin-top:1rem;">
+            <input type="text" id="trackUrlInput" placeholder="Paste audio URL or file path" style="flex:1;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:0.5rem;color:#fff;">
+            <button id="addTrackBtn" style="padding:0.5rem 1rem;background:linear-gradient(135deg,#e0e0e0,#808080);color:#0a0a0a;border:none;border-radius:8px;font-weight:600;">Add</button>
+          </div>
+        </div>
       </div>
-      <div class="version-card">
-        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
-        <h3>iOS Shortcut</h3>
-        <p>Apply themes on Safari with a single tap. No jailbreak needed.</p>
-        <div class="code-block" id="shortcutCode">shortcuts://run-shortcut?name=ChromeWeb</div>
-        <button class="copy-btn" onclick="copyCode('shortcutCode')">Copy Link</button>
+
+      <!-- Settings Panel -->
+      <div class="panel" id="panel-settings">
+        <h2 style="font-weight:700;margin-bottom:1rem;">Settings</h2>
+        <div id="userInfo" style="margin-bottom:2rem;"></div>
+        <div style="margin-bottom:1rem;">
+          <label style="display:block;color:#aaa;">Default Font</label>
+          <input type="text" id="defaultFontInput" placeholder="e.g. Inter" style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:0.5rem;color:#fff;">
+        </div>
+        <button id="logoutBtn" style="padding:0.75rem 2rem;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);color:#fff;border-radius:9999px;font-weight:600;cursor:pointer;">Log Out</button>
       </div>
-      <div class="version-card">
-        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
-        <h3>Direct Code</h3>
-        <p>Embed ChromeWeb logic directly into your HTML/CSS/JS.</p>
-        <div class="code-block" id="codeSnippet"><style>/* your theme */</style><script>(function(){ /* injection code */ })();</script></div>
-        <button class="copy-btn" onclick="copyCode('codeSnippet')">Copy Snippet</button>
-      </div>
-    </div>
+    </main>
   </div>
-
-  <footer class="footer">
-    ChromeWeb &copy; 2026 — <a href="#">GitHub</a> · <a href="#">Twitter</a> · <a href="#">Discord</a>
-  </footer>
 
   <!-- Scripts -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
@@ -235,14 +239,14 @@
   <script src="https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.dots.min.js"></script>
   <script>
     // Vanta backgrounds
-    VANTA.GLOBE({ el: "#vanta-bg", mouseControls: true, touchControls: true, gyroControls: false, minHeight: 200.00, minWidth: 200.00, scale: 1.00, scaleMobile: 1.00, color: 0xeeeeee, size: 2.00, backgroundColor: 0x0 });
-    VANTA.DOTS({ el: "#vanta-dots", mouseControls: false, touchControls: false, gyroControls: false, minHeight: 200.00, minWidth: 200.00, scale: 1.00, scaleMobile: 1.00, color: 0xd7d7d7, color2: 0xd7d7d7, size: 1.60, spacing: 15.00, showLines: false, backgroundColor: 0x0 });
-    VANTA.GLOBE({ el: "#vanta-bg-light", mouseControls: false, touchControls: false, gyroControls: false, minHeight: 200.00, minWidth: 200.00, scale: 1.00, scaleMobile: 1.00, color: 0x1b191a, color2: 0xf0e0e, size: 0.90, backgroundColor: 0xf7f7f7 });
-    VANTA.DOTS({ el: "#vanta-dots-light", mouseControls: false, touchControls: false, gyroControls: false, minHeight: 200.00, minWidth: 200.00, scale: 1.00, scaleMobile: 1.00, color: 0x141313, color2: 0x80808, size: 1.60, spacing: 15.00, showLines: false, backgroundColor: 0xf7f2f2 });
+    VANTA.GLOBE({ el: "#vanta-bg", mouseControls: true, touchControls: true, gyroControls: false, minHeight: 200, minWidth: 200, scale: 1, scaleMobile: 1, color: 0xeeeeee, size: 2, backgroundColor: 0x0 });
+    VANTA.DOTS({ el: "#vanta-dots", mouseControls: false, touchControls: false, gyroControls: false, minHeight: 200, minWidth: 200, scale: 1, scaleMobile: 1, color: 0xd7d7d7, color2: 0xd7d7d7, size: 1.6, spacing: 15, showLines: false, backgroundColor: 0x0 });
+    VANTA.GLOBE({ el: "#vanta-bg-light", mouseControls: false, touchControls: false, gyroControls: false, minHeight: 200, minWidth: 200, scale: 1, scaleMobile: 1, color: 0x1b191a, color2: 0xf0e0e, size: 0.9, backgroundColor: 0xf7f7f7 });
+    VANTA.DOTS({ el: "#vanta-dots-light", mouseControls: false, touchControls: false, gyroControls: false, minHeight: 200, minWidth: 200, scale: 1, scaleMobile: 1, color: 0x141313, color2: 0x80808, size: 1.6, spacing: 15, showLines: false, backgroundColor: 0xf7f2f2 });
 
     // Theme toggle
     const html = document.documentElement;
-    const toggleBtn = document.getElementById('themeToggle');
+    const themeToggle = document.getElementById('themeToggle');
     const darkBg = document.getElementById('vanta-bg');
     const darkDots = document.getElementById('vanta-dots');
     const lightBg = document.getElementById('vanta-bg-light');
@@ -260,7 +264,7 @@
     const savedTheme = localStorage.getItem('theme') || 'dark';
     html.setAttribute('data-theme', savedTheme);
     applyTheme(savedTheme);
-    toggleBtn.addEventListener('click', () => {
+    themeToggle.addEventListener('click', () => {
       const cur = html.getAttribute('data-theme');
       const next = cur === 'dark' ? 'light' : 'dark';
       html.setAttribute('data-theme', next);
@@ -268,97 +272,210 @@
       applyTheme(next);
     });
 
-    // Auth helpers
-    function getUsers() { return JSON.parse(localStorage.getItem('chromeweb_users') || '[]'); }
-    function getCurrentUser() {
-      const token = localStorage.getItem('chromeweb_token');
-      if (!token) return null;
-      return getUsers().find(u => u.token === token) || null;
-    }
-
-    const userSection = document.getElementById('userSection');
-    const userInitial = document.getElementById('userInitial');
-    const userNameDisplay = document.getElementById('userNameDisplay');
-    const userEmailDisplay = document.getElementById('userEmailDisplay');
-    const logoutBtn = document.getElementById('logoutBtn');
-
-    function updateUserUI() {
-      const user = getCurrentUser();
-      if (user) {
-        userInitial.textContent = user.username.charAt(0).toUpperCase();
-        userNameDisplay.textContent = user.username;
-        userEmailDisplay.textContent = user.email;
-        logoutBtn.style.display = 'block';
-      } else {
-        userInitial.textContent = '?';
-        userNameDisplay.textContent = 'Not logged in';
-        userEmailDisplay.textContent = 'Sign in to manage your mods';
-        logoutBtn.style.display = 'none';
-      }
-    }
-    updateUserUI();
-
-    logoutBtn.addEventListener('click', () => {
-      localStorage.removeItem('chromeweb_token');
-      window.location.href = 'accounts.html';
+    // Sidebar navigation
+    const buttons = document.querySelectorAll('.sidebar button');
+    const panels = document.querySelectorAll('.panel');
+    buttons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        buttons.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        const panelId = btn.dataset.panel;
+        panels.forEach(p => p.classList.remove('active'));
+        document.getElementById(`panel-${panelId}`).classList.add('active');
+      });
     });
 
-    // Prebuilt mods data
-    const prebuiltMods = [
-      { id: 'dark-mode', name: 'Dark Mode Everywhere', desc: 'Universal dark theme for any site.', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>' },
-      { id: 'font-changer', name: 'Font Customizer', desc: 'Switch fonts on the fly with a click.', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 7 12 21 20 7"/><line x1="7" y1="12" x2="17" y2="12"/></svg>' },
-      { id: 'youtube-clean', name: 'YouTube Clean', desc: 'Remove distractions, focus on video.', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>' },
-      { id: 'wikipedia-modern', name: 'Wikipedia Modern', desc: 'A sleek, readable Wikipedia redesign.', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>' },
-      { id: 'chromecord', name: 'ChromeCord Nitro', desc: 'Fake Nitro perks on Discord.', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>' },
-      { id: 'audio-anywhere', name: 'Audio Anywhere', desc: 'Floating music player on any page.', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>' },
-      { id: 'privacy-shield', name: 'Privacy Shield', desc: 'Block trackers and analytics scripts.', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>' },
-      { id: 'custom-cursor', name: 'Custom Cursor', desc: 'Replace default cursor with a custom SVG.', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3l7.07 16.97 2.51-7.39 7.39-2.51L3 3z"/><path d="M13 13l6 6"/></svg>' }
-    ];
+    // Music player logic
+    const audio = new Audio();
+    let playlist = [];
+    let currentTrackIndex = -1;
+    let repeatMode = 'off';
+    let shuffle = false;
 
-    const prebuiltContainer = document.getElementById('prebuiltModsContainer');
-    function getInstalledMods() {
-      return JSON.parse(localStorage.getItem('installed_mods') || '[]');
+    const coverDiv = document.getElementById('musicCover');
+    const titleEl = document.getElementById('musicTitle');
+    const artistEl = document.getElementById('musicArtist');
+    const progressBar = document.getElementById('musicProgress');
+    const progressFill = document.getElementById('musicProgressFill');
+    const currentTimeEl = document.getElementById('currentTime');
+    const durationEl = document.getElementById('duration');
+    const playPauseBtn = document.getElementById('playPauseBtn');
+    const repeatBtn = document.getElementById('repeatBtn');
+    const shuffleBtn = document.getElementById('shuffleBtn');
+    const volumeSlider = document.getElementById('volumeSlider');
+    const trackUrlInput = document.getElementById('trackUrlInput');
+    const addTrackBtn = document.getElementById('addTrackBtn');
+
+    audio.volume = 0.8;
+
+    function formatTime(sec) {
+      sec = Math.floor(sec) || 0;
+      const mins = Math.floor(sec / 60);
+      const remain = sec % 60;
+      return `${mins}:${remain.toString().padStart(2, '0')}`;
     }
-    function installMod(mod) {
-      const installed = getInstalledMods();
-      if (!installed.find(m => m.id === mod.id)) {
-        installed.push(mod);
-        localStorage.setItem('installed_mods', JSON.stringify(installed));
+
+    function loadTrack(index) {
+      if (index < 0 || index >= playlist.length) return;
+      const track = playlist[index];
+      audio.src = track.url;
+      currentTrackIndex = index;
+      titleEl.textContent = track.name || 'Unknown';
+      artistEl.textContent = track.artist || '';
+      if (track.cover) {
+        coverDiv.innerHTML = `<img src="${track.cover}" alt="cover">`;
+      } else {
+        coverDiv.innerHTML = '<svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="1.5"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>';
       }
-      renderMods();
+      audio.play().catch(() => {});
+      updatePlayPauseIcon();
     }
 
-    function renderMods() {
-      const installed = getInstalledMods();
-      prebuiltContainer.innerHTML = prebuiltMods.map(mod => {
-        const isInstalled = installed.some(m => m.id === mod.id);
-        return `
-          <div class="mod-card">
-            <div>${mod.icon}</div>
-            <h3>${mod.name}</h3>
-            <p>${mod.desc}</p>
-            ${isInstalled
-              ? '<span class="installed-badge">Installed</span>'
-              : '<button class="install-btn" onclick="installModById(\'' + mod.id + '\')">Install</button>'}
-          </div>
-        `;
-      }).join('');
-    }
-
-    window.installModById = function(id) {
-      const mod = prebuiltMods.find(m => m.id === id);
-      if (mod) installMod(mod);
-    };
-    renderMods();
-
-    // Copy function
-    window.copyCode = function(id) {
-      const el = document.getElementById(id);
-      if (el) {
-        navigator.clipboard.writeText(el.textContent.trim());
-        alert('Copied to clipboard!');
+    function updatePlayPauseIcon() {
+      if (audio.paused) {
+        playPauseBtn.innerHTML = '<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M6 4l15 8-15 8z"/></svg>';
+      } else {
+        playPauseBtn.innerHTML = '<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M6 4h4v16H6zM14 4h4v16h-4z"/></svg>';
       }
-    };
+    }
+
+    audio.addEventListener('timeupdate', () => {
+      if (audio.duration) {
+        const pct = (audio.currentTime / audio.duration) * 100;
+        progressFill.style.width = pct + '%';
+        currentTimeEl.textContent = formatTime(audio.currentTime);
+        durationEl.textContent = formatTime(audio.duration);
+      }
+    });
+
+    audio.addEventListener('ended', () => {
+      if (repeatMode === 'one') {
+        audio.currentTime = 0;
+        audio.play();
+      } else {
+        nextTrack();
+      }
+    });
+
+    function nextTrack() {
+      if (shuffle && playlist.length > 1) {
+        let next;
+        do { next = Math.floor(Math.random() * playlist.length); } while (next === currentTrackIndex && playlist.length > 1);
+        loadTrack(next);
+      } else {
+        let next = currentTrackIndex + 1;
+        if (next >= playlist.length) {
+          if (repeatMode === 'all') next = 0;
+          else { audio.pause(); updatePlayPauseIcon(); return; }
+        }
+        loadTrack(next);
+      }
+    }
+
+    function prevTrack() {
+      if (currentTrackIndex > 0) loadTrack(currentTrackIndex - 1);
+      else if (repeatMode === 'all') loadTrack(playlist.length - 1);
+    }
+
+    playPauseBtn.addEventListener('click', () => {
+      if (playlist.length === 0) return;
+      if (audio.paused) {
+        if (currentTrackIndex === -1) loadTrack(0);
+        else audio.play();
+      } else audio.pause();
+    });
+
+    document.getElementById('nextBtn').addEventListener('click', nextTrack);
+    document.getElementById('prevBtn').addEventListener('click', prevTrack);
+
+    repeatBtn.addEventListener('click', () => {
+      if (repeatMode === 'off') { repeatMode = 'one'; repeatBtn.title = 'Repeat: one'; repeatBtn.style.color = '#c0c0c0'; }
+      else if (repeatMode === 'one') { repeatMode = 'all'; repeatBtn.title = 'Repeat: all'; }
+      else { repeatMode = 'off'; repeatBtn.title = 'Repeat: off'; repeatBtn.style.color = ''; }
+    });
+
+    shuffleBtn.addEventListener('click', () => {
+      shuffle = !shuffle;
+      shuffleBtn.title = shuffle ? 'Shuffle: on' : 'Shuffle: off';
+      shuffleBtn.style.color = shuffle ? '#c0c0c0' : '';
+    });
+
+    progressBar.addEventListener('click', (e) => {
+      if (!audio.duration) return;
+      const rect = progressBar.getBoundingClientRect();
+      audio.currentTime = ((e.clientX - rect.left) / rect.width) * audio.duration;
+    });
+
+    volumeSlider.addEventListener('input', (e) => { audio.volume = parseFloat(e.target.value); });
+
+    addTrackBtn.addEventListener('click', () => {
+      const url = trackUrlInput.value.trim();
+      if (url) {
+        const name = prompt('Track name (optional):') || url.split('/').pop();
+        const cover = prompt('Cover image URL (optional):') || '';
+        playlist.push({ url, name, cover });
+        if (currentTrackIndex === -1) loadTrack(0);
+        trackUrlInput.value = '';
+      }
+    });
+
+    // Auth / user display
+    function getUser() {
+      const token = localStorage.getItem('chromeweb_token');
+      if (!token) return null;
+      const users = JSON.parse(localStorage.getItem('chromeweb_users') || '[]');
+      return users.find(u => u.token === token);
+    }
+    const user = getUser();
+    const userInfoDiv = document.getElementById('userInfo');
+    if (user) {
+      userInfoDiv.innerHTML = `<div style="display:flex;align-items:center;gap:1rem;">
+        <div style="width:48px;height:48px;border-radius:50%;background:rgba(192,192,192,0.15);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:1.5rem;color:#c0c0c0;">${user.username.charAt(0).toUpperCase()}</div>
+        <div><strong>${user.username}</strong><br><span style="color:#aaa;">${user.email}</span></div>
+      </div>`;
+    } else {
+      userInfoDiv.innerHTML = '<p><a href="accounts.html" style="color:#c0c0c0;">Sign in</a> to manage your account.</p>';
+    }
+    document.getElementById('logoutBtn').addEventListener('click', () => {
+      localStorage.removeItem('chromeweb_token');
+      window.location.reload();
+    });
+
+    // Installed mods list
+    const installedMods = JSON.parse(localStorage.getItem('installed_mods') || '[]');
+    const installedDiv = document.getElementById('installedMods');
+    installedDiv.innerHTML = installedMods.length ? installedMods.map(m => `<div style="background:rgba(255,255,255,0.03);padding:0.5rem 1rem;border-radius:8px;">${m.name}</div>`).join('') : '<p style="color:#aaa;">No mods installed yet.</p>';
+
+    // Publish mod functionality
+    document.getElementById('publishModBtn').addEventListener('click', async () => {
+      if (!getUser()) return alert('You must be logged in to publish mods.');
+      const name = prompt('Mod name:');
+      if (!name) return;
+      const type = prompt('Type (css, js, html):');
+      const description = prompt('Short description:');
+      const content = prompt('Paste the full code:');
+      try {
+        const res = await fetch('/api/mods', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name, description, author: getUser().username, type, content }),
+        });
+        const data = await res.json();
+        if (res.ok) {
+          alert('Mod published!');
+          // Optionally add to installed mods
+          const mods = JSON.parse(localStorage.getItem('installed_mods') || '[]');
+          mods.push({ name, type });
+          localStorage.setItem('installed_mods', JSON.stringify(mods));
+          // Refresh list
+          installedDiv.innerHTML = mods.map(m => `<div style="background:rgba(255,255,255,0.03);padding:0.5rem 1rem;border-radius:8px;">${m.name}</div>`).join('');
+        } else {
+          alert('Error: ' + data.error);
+        }
+      } catch (err) {
+        alert('Failed to reach server.');
+      }
+    });
   </script>
 </body>
 </html>
