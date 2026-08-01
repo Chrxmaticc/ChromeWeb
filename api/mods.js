@@ -1,61 +1,29 @@
-const https = require('https');
+const { Pool } = require('pg');
 
-const NEON_API_KEY = process.env.NEON_API_KEY;
-const NEON_PROJECT_ID = process.env.NEON_PROJECT_ID;
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+});
 
-function executeQuery(sql, params = []) {
-  return new Promise((resolve, reject) => {
-    const body = JSON.stringify({ query: sql, params });
-    const options = {
-      hostname: `${NEON_PROJECT_ID}.neon.tech`,
-      path: '/sql',
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${NEON_API_KEY}`,
-        'Content-Length': Buffer.byteLength(body),
-      },
-    };
-    const req = https.request(options, (res) => {
-      let data = '';
-      res.on('data', chunk => data += chunk);
-      res.on('end', () => {
-        try {
-          const json = JSON.parse(data);
-          if (res.statusCode >= 400) {
-            console.error('Neon error:', json);
-            reject(new Error(json.message || 'Database error'));
-          } else {
-            resolve(json);
-          }
-        } catch (e) {
-          reject(e);
-        }
-      });
-    });
-    req.on('error', (e) => reject(e));
-    req.write(body);
-    req.end();
-  });
+async function ensureTable() {
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS mods (
+      id UUID DEFAULT gen_random_uuid(),
+      name TEXT NOT NULL,
+      description TEXT,
+      author TEXT NOT NULL,
+      type TEXT CHECK (type IN ('css', 'js', 'html')),
+      content TEXT NOT NULL,
+      created_at TIMESTAMPTZ DEFAULT now()
+    )
+  `);
 }
 
 module.exports = async function handler(req, res) {
   try {
-    // Ensure table exists
-    await executeQuery(`
-      CREATE TABLE IF NOT EXISTS mods (
-        id UUID DEFAULT gen_random_uuid(),
-        name TEXT NOT NULL,
-        description TEXT,
-        author TEXT NOT NULL,
-        type TEXT CHECK (type IN ('css', 'js', 'html')),
-        content TEXT NOT NULL,
-        created_at TIMESTAMPTZ DEFAULT now()
-      )
-    `);
+    await ensureTable();
 
     if (req.method === 'GET') {
-      const result = await executeQuery('SELECT * FROM mods ORDER BY created_at DESC');
+      const result = await pool.query('SELECT * FROM mods ORDER BY created_at DESC');
       return res.status(200).json(result.rows);
     }
 
@@ -64,7 +32,7 @@ module.exports = async function handler(req, res) {
       if (!name || !author || !type || !content) {
         return res.status(400).json({ error: 'Missing required fields' });
       }
-      const result = await executeQuery(
+      const result = await pool.query(
         'INSERT INTO mods (name, description, author, type, content) VALUES ($1, $2, $3, $4, $5) RETURNING *',
         [name, description, author, type, content]
       );
@@ -72,8 +40,8 @@ module.exports = async function handler(req, res) {
     }
 
     return res.status(405).json({ error: 'Method not allowed' });
-  } catch (err) {
-    console.error('API error:', err);
-    return res.status(500).json({ error: err.message || 'Internal server error' });
+  } catch (error) {
+    console.error('Mods error:', error);
+    return res.status(500).json({ error: 'Internal server error' });
   }
 };
