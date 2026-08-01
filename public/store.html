@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ChromeWeb – Account</title>
+  <link rel="icon" type="image/png" href="icon.png">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,...">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400..700&display=swap" rel="stylesheet">
+  <style>
+    /* Same styling as before (topbar, glass card, dark/light mode, Vanta backgrounds) */
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background: #000; color: #fff; overflow-x: hidden; min-height: 100vh; position: relative; }
+    #vanta-bg, #vanta-bg-light { position:fixed; top:0; left:0; width:100vw; height:100vh; z-index:0; pointer-events:none; }
+    #vanta-dots, #vanta-dots-light { position:fixed; top:0; left:0; width:100%; height:100%; z-index:1; pointer-events:none; opacity:0.3; }
+    #vanta-bg-light, #vanta-dots-light { display:none; }
+    /* ... (include all the topbar, glass card, input, button styles from previous accounts.html) ... */
+  </style>
+</head>
+<body>
+  <div id="vanta-bg"></div>
+  <div id="vanta-dots"></div>
+  <div id="vanta-bg-light"></div>
+  <div id="vanta-dots-light"></div>
+
+  <header class="topbar">
+    <a href="index.html" class="logo">
+      <svg viewBox="0 0 70 70" fill="none">...</svg>
+      <span>ChromeWeb</span>
+    </a>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="store.html">Store</a>
+      <a href="app.html">Dashboard</a>
+      <a href="docs.html">Docs</a>
+      <button class="theme-toggle-btn" id="themeToggle">...</button>
+    </nav>
+  </header>
+
+  <div class="main">
+    <div class="accounts-card" id="accountsCard">
+      <!-- Login Form -->
+      <div class="form-login active" id="loginForm">
+        <h2>Welcome back</h2>
+        <div class="form-group">
+          <label>Email</label>
+          <div class="input-wrapper">
+            <svg>...</svg>
+            <input type="email" placeholder="you@example.com" id="loginEmail">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Password</label>
+          <div class="input-wrapper">
+            <svg>...</svg>
+            <input type="password" placeholder="••••••••" id="loginPassword">
+          </div>
+        </div>
+        <button class="btn" id="loginBtn">Log In</button>
+        <p class="alt-action">Don't have an account? <a href="#" id="showRegister">Sign up</a></p>
+      </div>
+
+      <!-- Register Form -->
+      <div class="form-register" id="registerForm">
+        <h2>Create account</h2>
+        <div class="form-group">
+          <label>Username</label>
+          <div class="input-wrapper"><svg>...</svg><input type="text" id="regUser"></div>
+        </div>
+        <div class="form-group">
+          <label>Email</label>
+          <div class="input-wrapper"><svg>...</svg><input type="email" id="regEmail"></div>
+        </div>
+        <div class="form-group">
+          <label>Password</label>
+          <div class="input-wrapper"><svg>...</svg><input type="password" id="regPassword"></div>
+        </div>
+        <button class="btn" id="registerBtn">Create Account</button>
+        <p class="alt-action">Already have an account? <a href="#" id="showLogin">Log in</a></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts (Vanta, theme toggle, and new fetch logic) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.globe.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.dots.min.js"></script>
+  <script>
+    // Vanta + theme toggle (same as before)
+    // ...
+
+    // Form switching
+    document.getElementById('showRegister').addEventListener('click', e => { e.preventDefault(); document.getElementById('loginForm').classList.remove('active'); document.getElementById('registerForm').classList.add('active'); });
+    document.getElementById('showLogin').addEventListener('click', e => { e.preventDefault(); document.getElementById('registerForm').classList.remove('active'); document.getElementById('loginForm').classList.add('active'); });
+
+    // Registration
+    document.getElementById('registerBtn').addEventListener('click', async () => {
+      const username = document.getElementById('regUser').value.trim();
+      const email = document.getElementById('regEmail').value.trim();
+      const password = document.getElementById('regPassword').value;
+      if (!username || !email || !password) return alert('All fields required.');
+      if (password.length < 6) return alert('Password must be at least 6 characters.');
+      try {
+        const res = await fetch('/api/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, email, password }),
+        });
+        const data = await res.json();
+        if (res.ok) {
+          alert('Registration successful! Please log in.');
+          document.getElementById('registerForm').classList.remove('active');
+          document.getElementById('loginForm').classList.add('active');
+        } else {
+          alert(data.error || 'Registration failed.');
+        }
+      } catch (err) {
+        alert('Network error. Is the API running?');
+      }
+    });
+
+    // Login
+    document.getElementById('loginBtn').addEventListener('click', async () => {
+      const email = document.getElementById('loginEmail').value.trim();
+      const password = document.getElementById('loginPassword').value;
+      if (!email || !password) return alert('Email and password required.');
+      try {
+        const res = await fetch('/api/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password }),
+        });
+        const data = await res.json();
+        if (res.ok) {
+          localStorage.setItem('chromeweb_token', data.token);
+          // Also store user info for convenience
+          localStorage.setItem('chromeweb_user', JSON.stringify(data.user));
+          window.location.href = 'app.html';
+        } else {
+          alert(data.error || 'Login failed.');
+        }
+      } catch (err) {
+        alert('Network error. Is the API running?');
+      }
+    });
+  </script>
+</body>
+</html>
