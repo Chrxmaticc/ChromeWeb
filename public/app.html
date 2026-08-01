@@ -51,7 +51,7 @@
     .sidebar {
       width:250px; background: rgba(10,10,10,0.7); backdrop-filter:blur(12px);
       border-right:1px solid rgba(255,255,255,0.05); padding:2rem 1rem;
-      display:flex; flex-direction:column; gap:1rem;
+      display:flex; flex-direction:column; gap:0.5rem;
     }
     .sidebar button {
       background: transparent; border: none; color: #b0b0b0; font-size:1rem;
@@ -63,6 +63,31 @@
     .content-area { flex:1; padding:2rem; position:relative; overflow-y:auto; }
     .panel { display:none; }
     .panel.active { display:block; }
+
+    /* Flashy cards */
+    .glass-card {
+      background: rgba(18,18,18,0.55); backdrop-filter: blur(16px);
+      border:1px solid rgba(192,192,192,0.15); border-radius:1.5rem;
+      padding:2rem; margin-bottom:2rem;
+      box-shadow:0 30px 60px rgba(0,0,0,0.8), inset 0 1px 0 rgba(255,255,255,0.06);
+      transition: transform 0.2s, border-color 0.3s;
+    }
+    .glass-card:hover { border-color: rgba(192,192,192,0.4); }
+    .feature-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1.5rem; margin-top: 1.5rem;
+    }
+    .feature-item {
+      background: rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.08);
+      border-radius:16px; padding:1.5rem; display:flex; flex-direction:column;
+      align-items:center; text-align:center; gap:0.75rem;
+      transition: all 0.3s;
+    }
+    .feature-item:hover {
+      background: rgba(255,255,255,0.05); transform: translateY(-5px);
+      box-shadow:0 10px 25px rgba(0,0,0,0.6);
+    }
+    .feature-item svg { width:2.5rem; height:2.5rem; color:#c0c0c0; }
 
     /* Music player */
     .music-player {
@@ -88,8 +113,24 @@
     }
     .music-player .controls button:hover { background: rgba(255,255,255,0.2); }
     .progress-bar { height:4px; background:#333; border-radius:2px; overflow:hidden; cursor:pointer; }
-    .progress-fill { height:100%; background:linear-gradient(to right, #c0c0c0, #e0e0e0); width:0%; }
+    .progress-fill { height:100%; background:linear-gradient(to right, #c0c0c0, #e0e0e0); width:0%; transition: width 0.1s linear; }
     input, select, textarea { font-family:inherit; }
+
+    /* Settings styles */
+    .setting-row {
+      display:flex; justify-content:space-between; align-items:center;
+      padding:0.8rem 0; border-bottom:1px solid rgba(255,255,255,0.05);
+    }
+    .toggle-switch {
+      position: relative; width: 40px; height: 22px; background: #555; border-radius: 11px;
+      cursor: pointer; transition: background 0.3s;
+    }
+    .toggle-switch.on { background: #c0c0c0; }
+    .toggle-switch::after {
+      content: ''; position: absolute; top: 2px; left: 2px; width: 18px; height: 18px;
+      background: #fff; border-radius: 50%; transition: left 0.3s;
+    }
+    .toggle-switch.on::after { left: 20px; }
 
     /* Light mode overrides */
     [data-theme="light"] body { background:#f7f7f7; }
@@ -102,7 +143,19 @@
     [data-theme="light"] .sidebar { background:rgba(255,255,255,0.6); }
     [data-theme="light"] .sidebar button { color:#555; }
     [data-theme="light"] .sidebar button:hover, [data-theme="light"] .sidebar button.active { background:rgba(0,0,0,0.05); color:#000; }
-    [data-theme="light"] .music-player { background:rgba(255,255,255,0.6); border-color:rgba(0,0,0,0.1); }
+    [data-theme="light"] .glass-card, [data-theme="light"] .music-player { background:rgba(255,255,255,0.6); border-color:rgba(0,0,0,0.1); }
+    [data-theme="light"] .feature-item { background:rgba(0,0,0,0.02); border-color:rgba(0,0,0,0.08); }
+    [data-theme="light"] .setting-row { border-bottom-color:rgba(0,0,0,0.08); }
+    [data-theme="light"] .toggle-switch { background: #ccc; }
+    [data-theme="light"] .toggle-switch.on { background: #333; }
+    [data-theme="light"] .toggle-switch::after { background: #fff; }
+    [data-theme="light"] input, [data-theme="light"] select, [data-theme="light"] textarea {
+      background:rgba(0,0,0,0.03); border-color:rgba(0,0,0,0.1); color:#222;
+    }
+    [data-theme="light"] .progress-bar { background:#ddd; }
+    [data-theme="light"] .progress-fill { background:linear-gradient(to right, #888, #aaa); }
+    [data-theme="light"] .music-player .controls button { background:rgba(0,0,0,0.05); color:#333; }
+    [data-theme="light"] .music-player .controls button:hover { background:rgba(0,0,0,0.1); }
   </style>
 </head>
 <body>
@@ -152,6 +205,10 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
         Music Player
       </button>
+      <button data-panel="discover">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        Discover
+      </button>
       <button data-panel="settings">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v2m0 18v2M4.22 4.22l1.42 1.42m12.72 12.72l1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
         Settings
@@ -162,25 +219,35 @@
       <!-- Dashboard Panel -->
       <div class="panel active" id="panel-dashboard">
         <h2 style="font-weight:700;margin-bottom:1rem;">Mod Manager</h2>
-        <div id="installedMods" style="display:flex;flex-direction:column;gap:0.5rem;"></div>
-        <button id="publishModBtn" style="margin-top:1rem;padding:0.5rem 1rem;background:linear-gradient(135deg,#e0e0e0,#808080);color:#0a0a0a;border:none;border-radius:8px;font-weight:600;cursor:pointer;">Publish New Mod to Database</button>
+        <div class="glass-card">
+          <h3 style="margin-bottom:1rem;">Installed Mods</h3>
+          <div id="installedMods" style="display:flex;flex-direction:column;gap:0.5rem;"></div>
+          <button id="publishModBtn" style="margin-top:1rem;padding:0.5rem 1rem;background:linear-gradient(135deg,#e0e0e0,#808080);color:#0a0a0a;border:none;border-radius:8px;font-weight:600;cursor:pointer;">Publish New Mod to Database</button>
+        </div>
+
+        <!-- Flashy Features Showcase -->
+        <div class="glass-card" style="margin-top:2rem;">
+          <h3 style="margin-bottom:1rem;">ChromeWeb Powers</h3>
+          <div class="feature-grid" id="featureGrid"></div>
+        </div>
       </div>
 
-      <!-- Store Panel (redirect card) -->
+      <!-- Store Panel -->
       <div class="panel" id="panel-store" style="text-align:center;padding-top:5rem;">
-        <h2 style="font-weight:700;margin-bottom:1rem;">ChromeWeb Marketplace</h2>
-        <p style="color:#b0b0b0;margin-bottom:2rem;">Browse community mods, themes, and plugins.</p>
-        <a href="store.html" style="display:inline-flex;align-items:center;gap:0.5rem;padding:0.8rem 2rem;background:linear-gradient(135deg,#e0e0e0,#808080);color:#0a0a0a;border-radius:9999px;font-weight:600;text-decoration:none;">
-          Open Store
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
-        </a>
+        <div class="glass-card" style="max-width:500px;margin:0 auto;">
+          <h2 style="font-weight:700;margin-bottom:1rem;">ChromeWeb Marketplace</h2>
+          <p style="color:#b0b0b0;margin-bottom:2rem;">Browse community mods, themes, and plugins.</p>
+          <a href="store.html" style="display:inline-flex;align-items:center;gap:0.5rem;padding:0.8rem 2rem;background:linear-gradient(135deg,#e0e0e0,#808080);color:#0a0a0a;border-radius:9999px;font-weight:600;text-decoration:none;">
+            Open Store
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
+          </a>
+        </div>
       </div>
 
       <!-- Music Player Panel -->
       <div class="panel" id="panel-music">
         <div class="music-player">
           <div class="cover" id="musicCover">
-            <!-- default music icon SVG -->
             <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="1.5"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
           </div>
           <div id="musicTitle" style="font-weight:600;text-align:center;margin-bottom:0.25rem;">No track loaded</div>
@@ -214,21 +281,46 @@
             <input type="range" id="volumeSlider" min="0" max="1" step="0.01" value="0.8" style="flex:1;">
           </div>
           <div style="display:flex;gap:0.5rem;margin-top:1rem;">
-            <input type="text" id="trackUrlInput" placeholder="Paste audio URL or file path" style="flex:1;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:0.5rem;color:#fff;">
+            <input type="text" id="trackUrlInput" placeholder="Audio URL (mp3/wav)" style="flex:1;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:0.5rem;color:#fff;">
             <button id="addTrackBtn" style="padding:0.5rem 1rem;background:linear-gradient(135deg,#e0e0e0,#808080);color:#0a0a0a;border:none;border-radius:8px;font-weight:600;">Add</button>
           </div>
+          <div style="margin-top:1rem;font-size:0.8rem;color:#aaa;">Playlist (<span id="playlistCount">0</span> tracks)</div>
         </div>
+      </div>
+
+      <!-- Discover Panel (live from database) -->
+      <div class="panel" id="panel-discover">
+        <h2 style="font-weight:700;margin-bottom:1rem;">Community Mods</h2>
+        <div id="communityMods" class="feature-grid"></div>
       </div>
 
       <!-- Settings Panel -->
       <div class="panel" id="panel-settings">
-        <h2 style="font-weight:700;margin-bottom:1rem;">Settings</h2>
-        <div id="userInfo" style="margin-bottom:2rem;"></div>
-        <div style="margin-bottom:1rem;">
-          <label style="display:block;color:#aaa;">Default Font</label>
-          <input type="text" id="defaultFontInput" placeholder="e.g. Inter" style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:0.5rem;color:#fff;">
+        <div class="glass-card">
+          <h2 style="font-weight:700;margin-bottom:1.5rem;">Settings</h2>
+          <div id="userInfo" style="margin-bottom:1.5rem;"></div>
+
+          <div class="setting-row">
+            <span>Auto‑apply night mode on new pages</span>
+            <div class="toggle-switch on" id="autoNightToggle"></div>
+          </div>
+          <div class="setting-row">
+            <span>Default Font</span>
+            <input type="text" id="defaultFontInput" placeholder="Inter" value="Inter" style="width:150px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:0.5rem;color:#fff;">
+          </div>
+          <div class="setting-row">
+            <span>Animations</span>
+            <div class="toggle-switch on" id="animationsToggle"></div>
+          </div>
+          <div class="setting-row">
+            <span>Show music player on page load</span>
+            <div class="toggle-switch" id="musicAutoShowToggle"></div>
+          </div>
+          <div class="setting-row" style="justify-content:flex-start;gap:2rem;">
+            <button id="resetDataBtn" style="padding:0.5rem 1rem;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);color:#fff;border-radius:8px;cursor:pointer;">Reset All Data</button>
+            <button id="logoutBtn" style="padding:0.5rem 1rem;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);color:#fff;border-radius:8px;cursor:pointer;">Log Out</button>
+          </div>
         </div>
-        <button id="logoutBtn" style="padding:0.75rem 2rem;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);color:#fff;border-radius:9999px;font-weight:600;cursor:pointer;">Log Out</button>
       </div>
     </main>
   </div>
@@ -279,17 +371,100 @@
       btn.addEventListener('click', () => {
         buttons.forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
-        const panelId = btn.dataset.panel;
         panels.forEach(p => p.classList.remove('active'));
-        document.getElementById(`panel-${panelId}`).classList.add('active');
+        document.getElementById(`panel-${btn.dataset.panel}`).classList.add('active');
       });
     });
 
-    // Music player logic
+    // Feature list generation
+    const features = [
+      { icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/></svg>', title:'Universal CSS', desc:'Inject custom styles anywhere.' },
+      { icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>', title:'JS Plugins', desc:'Add new functionality.' },
+      { icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>', title:'ChromeCord', desc:'Discord Nitro feel.' },
+      { icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>', title:'Audio Player', desc:'Play music on any page.' },
+      { icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/></svg>', title:'Cross Platform', desc:'Extension, exe, iOS, bookmarklet.' },
+      { icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l2.4 7.2h7.6l-6 4.8 2.4 7.2-6-4.8-6 4.8 2.4-7.2-6-4.8h7.6z"/></svg>', title:'ChromeGit', desc:'GitHub UI theming.' },
+      { icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>', title:'Privacy Shield', desc:'Block trackers.' },
+      { icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3l7.07 16.97 2.51-7.39 7.39-2.51L3 3z"/><path d="M13 13l6 6"/></svg>', title:'Custom Cursor', desc:'Replace cursor with SVG.' },
+      { icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 7 12 21 20 7"/><line x1="7" y1="12" x2="17" y2="12"/></svg>', title:'Font Enhancer', desc:'Gradient text on any site.' },
+      { icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>', title:'Emoji Everywhere', desc:'Use any emoji in any chat.' },
+      { icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>', title:'Wiki Modern', desc:'Wikipedia redesign.' },
+      { icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>', title:'YouTube Theatre', desc:'Maximized player.' },
+      { icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>', title:'Site Themes', desc:'Dark mode everywhere.' },
+      { icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>', title:'Night Mode', desc:'Instant black background.' },
+      { icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>', title:'Text Enhancer', desc:'Gradient & font control.' },
+      { icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/></svg>', title:'Music Sync', desc:'Visualizer for audio.' },
+      { icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M7 10.5h4M7 14h7"/></svg>', title:'Lyrics Overlay', desc:'Karaoke-style lyrics.' },
+      { icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l9 4.5v7L12 18l-9-4.5v-7L12 2z"/><path d="M12 18v4"/><path d="M8 22h8"/></svg>', title:'Bookmarklet Hub', desc:'Run tools via bookmarks.' },
+      { icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>', title:'Dashboard', desc:'Manage all your mods.' },
+      { icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="M12 16v-4m0-4h.01"/></svg>', title:'Error Shield', desc:'Hide sensitive errors.' }
+    ];
+    const featureGrid = document.getElementById('featureGrid');
+    features.forEach(f => {
+      featureGrid.innerHTML += `<div class="feature-item">${f.icon}<h4 style="color:#fff;">${f.title}</h4><p style="color:#b0b0b0;font-size:0.85rem;">${f.desc}</p></div>`;
+    });
+
+    // Installed mods list
+    function renderInstalledMods() {
+      const installed = JSON.parse(localStorage.getItem('installed_mods') || '[]');
+      const container = document.getElementById('installedMods');
+      if (installed.length === 0) {
+        container.innerHTML = '<p style="color:#aaa;">No mods installed yet. Publish one or install from Discover.</p>';
+      } else {
+        container.innerHTML = installed.map(m => `<div style="background:rgba(255,255,255,0.03);padding:0.5rem 1rem;border-radius:8px;display:flex;justify-content:space-between;"><span>${m.name} (${m.type})</span><button class="removeModBtn" data-name="${m.name}" style="background:none;border:none;color:#ff5555;cursor:pointer;">×</button></div>`).join('');
+        document.querySelectorAll('.removeModBtn').forEach(b => {
+          b.addEventListener('click', (e) => {
+            const name = e.target.dataset.name;
+            let mods = JSON.parse(localStorage.getItem('installed_mods') || '[]');
+            mods = mods.filter(m => m.name !== name);
+            localStorage.setItem('installed_mods', JSON.stringify(mods));
+            renderInstalledMods();
+          });
+        });
+      }
+    }
+    renderInstalledMods();
+
+    // Publish mod
+    document.getElementById('publishModBtn').addEventListener('click', async () => {
+      const token = localStorage.getItem('chromeweb_token');
+      const users = JSON.parse(localStorage.getItem('chromeweb_users') || '[]');
+      const user = users.find(u => u.token === token);
+      if (!user) return alert('You must be logged in to publish.');
+      const name = prompt('Mod name:');
+      if (!name) return;
+      const type = prompt('Type (css, js, html):');
+      const description = prompt('Short description:');
+      const content = prompt('Paste the full code:');
+      try {
+        const res = await fetch('/api/mods', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name, description, author: user.username, type, content }),
+        });
+        const data = await res.json();
+        if (res.ok) {
+          alert('Mod published!');
+          // Also add to installed mods
+          const mods = JSON.parse(localStorage.getItem('installed_mods') || '[]');
+          if (!mods.find(m => m.name === name)) {
+            mods.push({ name, type });
+            localStorage.setItem('installed_mods', JSON.stringify(mods));
+            renderInstalledMods();
+          }
+        } else {
+          alert('Error: ' + data.error);
+        }
+      } catch (err) {
+        alert('Failed to reach server.');
+      }
+    });
+
+    // Music player
     const audio = new Audio();
     let playlist = [];
     let currentTrackIndex = -1;
-    let repeatMode = 'off';
+    let repeatMode = 'off'; // off, one, all
     let shuffle = false;
 
     const coverDiv = document.getElementById('musicCover');
@@ -305,6 +480,7 @@
     const volumeSlider = document.getElementById('volumeSlider');
     const trackUrlInput = document.getElementById('trackUrlInput');
     const addTrackBtn = document.getElementById('addTrackBtn');
+    const playlistCount = document.getElementById('playlistCount');
 
     audio.volume = 0.8;
 
@@ -315,6 +491,10 @@
       return `${mins}:${remain.toString().padStart(2, '0')}`;
     }
 
+    function updatePlaylistCount() {
+      playlistCount.textContent = playlist.length;
+    }
+
     function loadTrack(index) {
       if (index < 0 || index >= playlist.length) return;
       const track = playlist[index];
@@ -323,7 +503,7 @@
       titleEl.textContent = track.name || 'Unknown';
       artistEl.textContent = track.artist || '';
       if (track.cover) {
-        coverDiv.innerHTML = `<img src="${track.cover}" alt="cover">`;
+        coverDiv.innerHTML = `<img src="${track.cover}" alt="cover" onerror="this.parentElement.innerHTML='<svg width=80 height=80 viewBox=\'0 0 24 24\' fill=none stroke=#888 stroke-width=1.5><path d=\'M9 18V5l12-2v13\'/><circle cx=6 cy=18 r=3/><circle cx=18 cy=16 r=3/></svg>'">`;
       } else {
         coverDiv.innerHTML = '<svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="1.5"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>';
       }
@@ -332,11 +512,9 @@
     }
 
     function updatePlayPauseIcon() {
-      if (audio.paused) {
-        playPauseBtn.innerHTML = '<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M6 4l15 8-15 8z"/></svg>';
-      } else {
-        playPauseBtn.innerHTML = '<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M6 4h4v16H6zM14 4h4v16h-4z"/></svg>';
-      }
+      playPauseBtn.innerHTML = audio.paused
+        ? '<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M6 4l15 8-15 8z"/></svg>'
+        : '<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M6 4h4v16H6zM14 4h4v16h-4z"/></svg>';
     }
 
     audio.addEventListener('timeupdate', () => {
@@ -346,6 +524,10 @@
         currentTimeEl.textContent = formatTime(audio.currentTime);
         durationEl.textContent = formatTime(audio.duration);
       }
+    });
+
+    audio.addEventListener('loadedmetadata', () => {
+      durationEl.textContent = formatTime(audio.duration);
     });
 
     audio.addEventListener('ended', () => {
@@ -412,14 +594,60 @@
       const url = trackUrlInput.value.trim();
       if (url) {
         const name = prompt('Track name (optional):') || url.split('/').pop();
+        const artist = prompt('Artist (optional):') || '';
         const cover = prompt('Cover image URL (optional):') || '';
-        playlist.push({ url, name, cover });
+        playlist.push({ url, name, artist, cover });
+        updatePlaylistCount();
         if (currentTrackIndex === -1) loadTrack(0);
         trackUrlInput.value = '';
       }
     });
 
-    // Auth / user display
+    // Discover panel – fetch from /api/mods
+    async function loadDiscover() {
+      try {
+        const res = await fetch('/api/mods');
+        const mods = await res.json();
+        const container = document.getElementById('communityMods');
+        if (mods.length === 0) {
+          container.innerHTML = '<p style="color:#aaa;">No community mods yet. Be the first to publish!</p>';
+        } else {
+          container.innerHTML = mods.map(m => `
+            <div class="feature-item">
+              <svg width="2rem" height="2rem" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+              <h4 style="color:#fff;">${m.name}</h4>
+              <p style="color:#b0b0b0;font-size:0.8rem;">by ${m.author} · ${m.type}</p>
+              <p style="color:#aaa;font-size:0.75rem;">${m.description || ''}</p>
+              <button class="installCommunityModBtn" data-id="${m.id}" style="padding:0.3rem 0.8rem;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);color:#fff;border-radius:6px;cursor:pointer;">Install</button>
+            </div>
+          `).join('');
+          document.querySelectorAll('.installCommunityModBtn').forEach(b => {
+            b.addEventListener('click', () => {
+              const mod = mods.find(m => m.id === b.dataset.id);
+              if (mod) {
+                const installed = JSON.parse(localStorage.getItem('installed_mods') || '[]');
+                if (!installed.find(m => m.name === mod.name)) {
+                  installed.push({ name: mod.name, type: mod.type });
+                  localStorage.setItem('installed_mods', JSON.stringify(installed));
+                  renderInstalledMods();
+                  alert('Mod installed!');
+                } else {
+                  alert('Already installed.');
+                }
+              }
+            });
+          });
+        }
+      } catch (e) {
+        document.getElementById('communityMods').innerHTML = '<p style="color:#ff5555;">Could not load community mods. Make sure the API is running.</p>';
+      }
+    }
+
+    // Load discover when panel is shown
+    const discoverBtn = document.querySelector('button[data-panel="discover"]');
+    discoverBtn.addEventListener('click', loadDiscover);
+
+    // Settings logic
     function getUser() {
       const token = localStorage.getItem('chromeweb_token');
       if (!token) return null;
@@ -441,41 +669,43 @@
       window.location.reload();
     });
 
-    // Installed mods list
-    const installedMods = JSON.parse(localStorage.getItem('installed_mods') || '[]');
-    const installedDiv = document.getElementById('installedMods');
-    installedDiv.innerHTML = installedMods.length ? installedMods.map(m => `<div style="background:rgba(255,255,255,0.03);padding:0.5rem 1rem;border-radius:8px;">${m.name}</div>`).join('') : '<p style="color:#aaa;">No mods installed yet.</p>';
+    // Toggle switches
+    function initToggle(id, storageKey, defaultValue) {
+      const el = document.getElementById(id);
+      const saved = localStorage.getItem(storageKey);
+      const isOn = saved !== null ? saved === 'true' : defaultValue;
+      if (isOn) el.classList.add('on');
+      else el.classList.remove('on');
+      el.addEventListener('click', () => {
+        el.classList.toggle('on');
+        localStorage.setItem(storageKey, el.classList.contains('on'));
+      });
+    }
+    initToggle('autoNightToggle', 'autoNight', true);
+    initToggle('animationsToggle', 'animations', true);
+    initToggle('musicAutoShowToggle', 'musicAutoShow', false);
 
-    // Publish mod functionality
-    document.getElementById('publishModBtn').addEventListener('click', async () => {
-      if (!getUser()) return alert('You must be logged in to publish mods.');
-      const name = prompt('Mod name:');
-      if (!name) return;
-      const type = prompt('Type (css, js, html):');
-      const description = prompt('Short description:');
-      const content = prompt('Paste the full code:');
-      try {
-        const res = await fetch('/api/mods', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ name, description, author: getUser().username, type, content }),
-        });
-        const data = await res.json();
-        if (res.ok) {
-          alert('Mod published!');
-          // Optionally add to installed mods
-          const mods = JSON.parse(localStorage.getItem('installed_mods') || '[]');
-          mods.push({ name, type });
-          localStorage.setItem('installed_mods', JSON.stringify(mods));
-          // Refresh list
-          installedDiv.innerHTML = mods.map(m => `<div style="background:rgba(255,255,255,0.03);padding:0.5rem 1rem;border-radius:8px;">${m.name}</div>`).join('');
-        } else {
-          alert('Error: ' + data.error);
-        }
-      } catch (err) {
-        alert('Failed to reach server.');
+    // Default font
+    const defaultFontInput = document.getElementById('defaultFontInput');
+    const savedFont = localStorage.getItem('defaultFont') || 'Inter';
+    defaultFontInput.value = savedFont;
+    defaultFontInput.addEventListener('input', () => {
+      localStorage.setItem('defaultFont', defaultFontInput.value);
+    });
+
+    // Reset data
+    document.getElementById('resetDataBtn').addEventListener('click', () => {
+      if (confirm('This will delete all your local data (installed mods, login, settings). Are you sure?')) {
+        localStorage.clear();
+        alert('All data cleared. The page will reload.');
+        location.reload();
       }
     });
+
+    // Initial load of discover if panel is active
+    if (document.getElementById('panel-discover').classList.contains('active')) {
+      loadDiscover();
+    }
   </script>
 </body>
 </html>
