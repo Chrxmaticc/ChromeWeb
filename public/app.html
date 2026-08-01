@@ -56,6 +56,14 @@
       width:250px; background: rgba(10,10,10,0.7); backdrop-filter:blur(12px);
       border-right:1px solid rgba(255,255,255,0.05); padding:2rem 1rem;
       display:flex; flex-direction:column; gap:0.4rem; overflow-y:auto;
+      transition: width 0.3s ease; position:relative;
+    }
+    .sidebar.collapsed { width:60px; }
+    .sidebar.collapsed button { justify-content:center; }
+    .sidebar.collapsed button span { display:none; }
+    .sidebar .collapse-btn {
+      position:absolute; top:10px; right:10px;
+      background:none; border:none; color:#aaa; cursor:pointer;
     }
     .sidebar button {
       background: transparent; border: none; color: #b0b0b0; font-size:0.95rem;
@@ -68,28 +76,42 @@
     .panel { display:none; flex:1; flex-direction:column; }
     .panel.active { display:flex; }
 
-    /* Dashboard grid structure */
+    /* Liquid glass card base */
+    .glass-card {
+      background: rgba(18,18,18,0.55); backdrop-filter: blur(16px);
+      border:1px solid rgba(192,192,192,0.15); border-radius:1.5rem;
+      padding:1.5rem; margin-bottom:1rem;
+      box-shadow:0 20px 30px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.06);
+      transition: all 0.3s;
+    }
+    .glass-card:hover { border-color: rgba(192,192,192,0.4); }
+    .glass-card h3 { font-size:1.1rem; font-weight:600; margin-bottom:0.5rem; color:#fff; }
+    .glass-card p { color:#b0b0b0; font-size:0.85rem; }
+
+    /* Dashboard specific grid */
     .top-horizontal-bar {
       height:50px; border-bottom:1px solid rgba(255,255,255,0.05);
       background: rgba(0,0,0,0.3); display:flex; align-items:center;
-      padding:0 2rem; color:#aaa; font-size:0.9rem;
+      padding:0 2rem; color:#aaa; font-size:0.9rem; justify-content:space-between;
     }
     .dashboard-body {
       flex:1; padding:1.5rem; display:flex; flex-direction:column; gap:1.5rem;
     }
     .control-strip {
-      display:flex; justify-content:space-between; height:36px;
+      display:flex; justify-content:space-between; align-items:center; height:36px;
     }
     .control-block-left, .control-block-right {
       background: rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.06);
       border-radius:10px; padding:0 1rem; display:flex; align-items:center;
+      font-size:0.85rem; color:#ccc;
     }
     .tab-band {
       display:grid; grid-template-columns:repeat(3,1fr); gap:1.5rem; height:40px;
     }
     .tab-band > div {
       background: rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.06);
-      border-radius:10px;
+      border-radius:10px; display:flex; align-items:center; justify-content:center;
+      font-size:0.8rem; color:#aaa;
     }
     .upper-main-grid {
       display:grid; grid-template-columns:1fr 1fr; gap:1.5rem; flex:1;
@@ -97,43 +119,28 @@
     .upper-left-grid {
       display:grid; grid-template-columns:1fr 1fr; grid-template-rows:1fr 1fr; gap:1.5rem;
     }
-    .upper-left-grid > div, .upper-right > div, .lower-main-grid > div {
-      background: rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.06);
-      border-radius:16px;
+    .upper-left-grid .kpi-card {
+      display:flex; flex-direction:column; justify-content:center; align-items:center;
+      text-align:center;
     }
+    .kpi-card .kpi-value { font-size:2.5rem; font-weight:800; color:#c0c0c0; }
+    .kpi-card .kpi-label { font-size:0.8rem; color:#888; text-transform:uppercase; letter-spacing:0.1em; }
     .upper-right {
       display:flex;
+    }
+    .map-placeholder {
+      flex:1; background: radial-gradient(circle, #1a1a1a, #0a0a0a);
+      display:flex; align-items:center; justify-content:center;
+      color:#555; font-size:1.2rem;
     }
     .lower-main-grid {
       display:grid; grid-template-columns:repeat(3,1fr); gap:1.5rem; flex:1;
     }
     .lower-main-grid > div {
-      min-height:200px;
+      min-height:200px; overflow-y:auto;
     }
 
-    /* Other panels */
-    .panel-content {
-      padding:2rem; overflow-y:auto; flex:1;
-    }
-    .glass-card {
-      background: rgba(18,18,18,0.55); backdrop-filter: blur(16px);
-      border:1px solid rgba(192,192,192,0.15); border-radius:1.5rem;
-      padding:2rem; margin-bottom:2rem;
-      box-shadow:0 30px 60px rgba(0,0,0,0.8), inset 0 1px 0 rgba(255,255,255,0.06);
-    }
-    .feature-grid {
-      display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 1.5rem; margin-top: 1.5rem;
-    }
-    .feature-item {
-      background: rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.08);
-      border-radius:16px; padding:1.5rem; display:flex; flex-direction:column;
-      align-items:center; text-align:center; gap:0.75rem;
-      transition: all 0.3s;
-    }
-    .feature-item:hover { background: rgba(255,255,255,0.05); transform: translateY(-5px); }
-
-    /* Music player (customizable) */
+    /* Music player enhancements */
     .music-player {
       background: rgba(18,18,18,0.55); backdrop-filter: blur(16px);
       border:1px solid rgba(192,192,192,0.15); border-radius:2rem;
@@ -143,7 +150,25 @@
     .music-player .cover { width:100%; aspect-ratio:1/1; border-radius:1.5rem; background:linear-gradient(135deg,#222,#111); display:flex; align-items:center; justify-content:center; margin-bottom:1.5rem; overflow:hidden; }
     .music-player .cover img { width:100%; height:100%; object-fit:cover; }
     .progress-bar { height:4px; background:#333; border-radius:2px; overflow:hidden; cursor:pointer; }
-    .progress-fill { height:100%; background:linear-gradient(to right, #c0c0c0, #e0e0e0); width:0%; }
+    .progress-fill { height:100%; background:linear-gradient(to right, #c0c0c0, #e0e0e0); width:0%; transition: width 0.1s linear; }
+
+    /* Universal panel */
+    .color-picker-row { display:flex; gap:1rem; align-items:center; margin-top:0.5rem; }
+
+    .setting-row {
+      display:flex; justify-content:space-between; align-items:center;
+      padding:0.8rem 0; border-bottom:1px solid rgba(255,255,255,0.05);
+    }
+    .toggle-switch {
+      position: relative; width: 40px; height: 22px; background: #555; border-radius: 11px;
+      cursor: pointer; transition: background 0.3s;
+    }
+    .toggle-switch.on { background: #c0c0c0; }
+    .toggle-switch::after {
+      content: ''; position: absolute; top: 2px; left: 2px; width: 18px; height: 18px;
+      background: #fff; border-radius: 50%; transition: left 0.3s;
+    }
+    .toggle-switch.on::after { left: 20px; }
 
     /* Light mode overrides */
     [data-theme="light"] body { background:#f7f7f7; }
@@ -156,7 +181,7 @@
     [data-theme="light"] .sidebar { background:rgba(255,255,255,0.6); }
     [data-theme="light"] .sidebar button { color:#555; }
     [data-theme="light"] .sidebar button:hover, [data-theme="light"] .sidebar button.active { background:rgba(0,0,0,0.05); color:#000; }
-    [data-theme="light"] .glass-card, [data-theme="light"] .music-player { background:rgba(255,255,255,0.6); border-color:rgba(0,0,0,0.1); }
+    [data-theme="light"] .glass-card { background:rgba(255,255,255,0.6); border-color:rgba(0,0,0,0.1); }
     [data-theme="light"] .top-horizontal-bar, [data-theme="light"] .control-block-left, [data-theme="light"] .control-block-right,
     [data-theme="light"] .tab-band > div, [data-theme="light"] .upper-left-grid > div, [data-theme="light"] .upper-right > div,
     [data-theme="light"] .lower-main-grid > div { background:rgba(0,0,0,0.02); border-color:rgba(0,0,0,0.08); }
@@ -164,6 +189,9 @@
     [data-theme="light"] .progress-fill { background:linear-gradient(to right, #888, #aaa); }
     [data-theme="light"] .music-player .controls button { background:rgba(0,0,0,0.05); color:#333; }
     [data-theme="light"] .music-player .controls button:hover { background:rgba(0,0,0,0.1); }
+    [data-theme="light"] .toggle-switch { background: #ccc; }
+    [data-theme="light"] .toggle-switch.on { background: #333; }
+    [data-theme="light"] .toggle-switch::after { background: #fff; }
   </style>
 </head>
 <body>
@@ -187,70 +215,106 @@
   </header>
 
   <div class="dashboard-layout">
-    <aside class="sidebar">
-      <button class="active" data-panel="dashboard"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>Dashboard</button>
-      <button data-panel="store"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/></svg>Store</button>
-      <button data-panel="music"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>Music Player</button>
-      <button data-panel="discover"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>Discover</button>
-      <button data-panel="bookmarklets"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 2l14 9-14 9V2z"/></svg>Bookmarklets</button>
-      <button data-panel="codetools"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>Code Tools</button>
-      <button data-panel="chromecord"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>ChromeCord</button>
-      <button data-panel="chromegit"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2C6.48 2 2 6.48 2 12c0 4.42 2.86 8.17 6.84 9.49.5.09.68-.22.68-.48 0-.24-.01-.87-.01-1.7-2.78.6-3.37-1.34-3.37-1.34-.45-1.15-1.11-1.46-1.11-1.46-.91-.62.07-.61.07-.61 1 .07 1.53 1.03 1.53 1.03.89 1.52 2.34 1.08 2.91.83.09-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.94 0-1.09.39-1.99 1.03-2.69-.1-.25-.45-1.27.1-2.65 0 0 .84-.27 2.75 1.03A9.56 9.56 0 0112 7.07c.85.004 1.7.115 2.5.337 1.91-1.3 2.75-1.03 2.75-1.03.55 1.38.2 2.4.1 2.65.64.7 1.03 1.6 1.03 2.69 0 3.84-2.34 4.68-4.57 4.93.36.31.68.92.68 1.85 0 1.34-.01 2.42-.01 2.75 0 .27.18.58.69.48A10.01 10.01 0 0022 12c0-5.52-4.48-10-10-10z"/></svg>ChromeGit</button>
-      <button data-panel="settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v2m0 18v2M4.22 4.22l1.42 1.42m12.72 12.72l1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>Settings</button>
+    <!-- Sidebar with collapse button -->
+    <aside class="sidebar" id="sidebar">
+      <button class="collapse-btn" id="collapseSidebar" title="Toggle sidebar">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      </button>
+      <button class="active" data-panel="dashboard"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg><span>Dashboard</span></button>
+      <button data-panel="store"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/></svg><span>Store</span></button>
+      <button data-panel="music"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg><span>Music Player</span></button>
+      <button data-panel="discover"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><span>Discover</span></button>
+      <button data-panel="bookmarklets"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 2l14 9-14 9V2z"/></svg><span>Bookmarklets</span></button>
+      <button data-panel="codetools"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg><span>Code Tools</span></button>
+      <button data-panel="universal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg><span>ChromeUniversal</span></button>
+      <button data-panel="settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v2m0 18v2M4.22 4.22l1.42 1.42m12.72 12.72l1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg><span>Settings</span></button>
     </aside>
+
     <main class="content-area" id="mainContent">
-      <!-- Dashboard Panel (empty grid) -->
+      <!-- Dashboard Panel (now filled with live data) -->
       <div class="panel active" id="panel-dashboard">
-        <div class="top-horizontal-bar">Dashboard Overview</div>
+        <div class="top-horizontal-bar">
+          <span>Dashboard Overview</span>
+          <span id="dashboardUser">Welcome, user</span>
+        </div>
         <div class="dashboard-body">
           <div class="control-strip">
-            <div class="control-block-left">Welcome, user</div>
-            <div class="control-block-right">Today</div>
+            <div class="control-block-left">📊 Real‑time Stats</div>
+            <div class="control-block-right" id="currentDate"></div>
           </div>
           <div class="tab-band">
-            <div></div><div></div><div></div>
+            <div>📁 Mods</div>
+            <div>⚡ Quick Actions</div>
+            <div>🔖 Bookmarks</div>
           </div>
           <div class="upper-main-grid">
             <div class="upper-left-grid">
-              <div></div><div></div><div></div><div></div>
+              <div class="glass-card kpi-card"><div class="kpi-value" id="kpiMods">0</div><div class="kpi-label">Installed Mods</div></div>
+              <div class="glass-card kpi-card"><div class="kpi-value" id="kpiBookmarklets">0</div><div class="kpi-label">Bookmarklets Generated</div></div>
+              <div class="glass-card kpi-card"><div class="kpi-value" id="kpiDiscover">0</div><div class="kpi-label">Community Mods</div></div>
+              <div class="glass-card kpi-card"><div class="kpi-value">99.9%</div><div class="kpi-label">Uptime</div></div>
             </div>
-            <div class="upper-right"><div style="flex:1;"></div></div>
+            <div class="upper-right">
+              <div class="glass-card map-placeholder" style="flex:1;">
+                <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="#666" stroke-width="1"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                <div style="margin-top:1rem;font-size:0.85rem;">ChromeWeb Reach</div>
+              </div>
+            </div>
           </div>
           <div class="lower-main-grid">
-            <div></div><div></div><div></div>
+            <div class="glass-card" id="recentModsCard">
+              <h3>Recently Installed</h3>
+              <div id="recentModsList" style="max-height:150px;overflow-y:auto;"></div>
+            </div>
+            <div class="glass-card">
+              <h3>Top Community Themes</h3>
+              <div id="topThemes" style="max-height:150px;overflow-y:auto;"></div>
+            </div>
+            <div class="glass-card">
+              <h3>Activity Feed</h3>
+              <div id="activityFeed" style="max-height:150px;overflow-y:auto;font-size:0.8rem;color:#aaa;"></div>
+            </div>
           </div>
         </div>
       </div>
 
       <!-- Store Panel -->
       <div class="panel" id="panel-store">
-        <div class="panel-content" style="text-align:center;padding-top:5rem;">
-          <div class="glass-card" style="max-width:500px;margin:0 auto;">
-            <h2 style="font-weight:700;margin-bottom:1rem;">ChromeWeb Marketplace</h2>
-            <p style="color:#b0b0b0;margin-bottom:2rem;">Browse community mods, themes, and plugins.</p>
-            <a href="store.html" style="display:inline-flex;align-items:center;gap:0.5rem;padding:0.8rem 2rem;background:linear-gradient(135deg,#e0e0e0,#808080);color:#0a0a0a;border-radius:9999px;font-weight:600;text-decoration:none;">Open Store <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg></a>
+        <div class="dashboard-body" style="align-items:center;justify-content:center;text-align:center;">
+          <div class="glass-card" style="max-width:500px;">
+            <h2>ChromeWeb Marketplace</h2>
+            <p style="margin:1rem 0;">Community mods, themes, and plugins.</p>
+            <a href="store.html" class="glass-card" style="display:inline-block;padding:0.8rem 2rem;background:linear-gradient(135deg,#e0e0e0,#808080);color:#0a0a0a;border-radius:9999px;font-weight:600;text-decoration:none;">Open Store</a>
           </div>
         </div>
       </div>
 
-      <!-- Music Player Panel -->
+      <!-- Music Player Panel (enhanced) -->
       <div class="panel" id="panel-music">
-        <div class="panel-content" style="display:flex;justify-content:center;">
+        <div class="dashboard-body" style="align-items:center;justify-content:center;">
           <div class="music-player">
             <div class="cover" id="musicCover"><svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="1.5"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></div>
             <div id="musicTitle" style="font-weight:600;text-align:center;">vax - rod</div>
             <div id="musicArtist" style="font-size:0.85rem;color:#aaa;text-align:center;">ChromeWeb OST</div>
             <div class="progress-bar" id="musicProgress" style="margin:1rem 0;"><div class="progress-fill" id="musicProgressFill"></div></div>
             <div style="display:flex;justify-content:space-between;font-size:0.75rem;color:#aaa;margin-bottom:1rem;"><span id="currentTime">0:00</span><span id="duration">0:00</span></div>
-            <div class="controls">
+            <div class="controls" style="display:flex; justify-content:space-between; align-items:center;">
               <button id="repeatBtn" title="Repeat: off"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 1l4 4-4 4"/><path d="M3 11V9a4 4 0 014-4h14"/><path d="M7 23l-4-4 4-4"/><path d="M21 13v2a4 4 0 01-4 4H3"/></svg></button>
               <button id="prevBtn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="19 20 9 12 19 4 19 20"/><line x1="5" y1="19" x2="5" y2="5"/></svg></button>
               <button id="playPauseBtn" style="width:56px;height:56px;"><svg id="playIcon" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M6 4l15 8-15 8z"/></svg></button>
               <button id="nextBtn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 4 15 12 5 20 5 4"/><line x1="19" y1="5" x2="19" y2="19"/></svg></button>
               <button id="shuffleBtn" title="Shuffle: off"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/><line x1="4" y1="4" x2="9" y2="9"/></svg></button>
             </div>
-            <div style="display:flex;align-items:center;gap:0.5rem;margin-top:1rem;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M19.07 4.93a10 10 0 010 14.14M15.54 8.46a5 5 0 010 7.07"/></svg><input type="range" id="volumeSlider" min="0" max="1" step="0.01" value="0.8" style="flex:1;"></div>
-            <div style="display:flex;gap:0.5rem;margin-top:1rem;"><input type="text" id="trackUrlInput" placeholder="Audio URL (mp3/wav)" style="flex:1;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:0.5rem;color:#fff;"><button id="addTrackBtn" style="padding:0.5rem 1rem;background:linear-gradient(135deg,#e0e0e0,#808080);color:#0a0a0a;border:none;border-radius:8px;font-weight:600;">Add</button></div>
+            <div style="display:flex;align-items:center;gap:0.5rem;margin-top:1rem;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M19.07 4.93a10 10 0 010 14.14M15.54 8.46a5 5 0 010 7.07"/></svg>
+              <input type="range" id="volumeSlider" min="0" max="1" step="0.01" value="0.8" style="flex:1;">
+            </div>
+            <div style="display:flex; gap:0.5rem; margin-top:1rem;">
+              <input type="text" id="trackUrlInput" placeholder="Audio URL or file" style="flex:1;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:0.5rem;color:#fff;">
+              <input type="file" id="audioFileInput" accept="audio/*" style="display:none;" onchange="handleFileSelect(event)">
+              <button id="uploadAudioBtn" style="padding:0.5rem 1rem;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);color:#fff;border-radius:8px;font-weight:600;cursor:pointer;" onclick="document.getElementById('audioFileInput').click()">📁</button>
+              <button id="addTrackBtn" style="padding:0.5rem 1rem;background:linear-gradient(135deg,#e0e0e0,#808080);color:#0a0a0a;border:none;border-radius:8px;font-weight:600;">Add</button>
+            </div>
             <div style="margin-top:1rem;font-size:0.8rem;color:#aaa;">Playlist (<span id="playlistCount">0</span> tracks)</div>
             <audio id="audioPlayer" src="/audio/vax-rod.mp3" preload="auto"></audio>
           </div>
@@ -259,62 +323,56 @@
 
       <!-- Discover Panel -->
       <div class="panel" id="panel-discover">
-        <div class="panel-content">
-          <h2 style="font-weight:700;margin-bottom:1rem;">Community Mods</h2>
-          <div id="communityMods" class="feature-grid"></div>
+        <div class="dashboard-body">
+          <h2 style="margin-bottom:1rem;">Community Mods</h2>
+          <div id="communityMods" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:1.5rem;"></div>
         </div>
       </div>
 
       <!-- Bookmarklets Panel -->
       <div class="panel" id="panel-bookmarklets">
-        <div class="panel-content">
-          <h2 style="font-weight:700;margin-bottom:1rem;">Pre‑made Bookmarklets</h2>
-          <div id="bookmarkletList" class="feature-grid"></div>
+        <div class="dashboard-body">
+          <h2 style="margin-bottom:1rem;">Ready‑to‑use Bookmarklets</h2>
+          <div id="bookmarkletList" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:1.5rem;"></div>
         </div>
       </div>
 
       <!-- Code Tools Panel -->
       <div class="panel" id="panel-codetools">
-        <div class="panel-content">
-          <h2 style="font-weight:700;margin-bottom:1rem;">Code Tools</h2>
+        <div class="dashboard-body">
+          <h2>Code Tools</h2>
           <textarea id="codeInput" placeholder="Write CSS or JavaScript..." style="width:100%;height:200px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:1rem;color:#fff;font-family:monospace;"></textarea>
           <select id="codeType" style="margin-top:1rem;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:0.5rem;color:#fff;"><option value="css">CSS</option><option value="js">JavaScript</option></select>
-          <button id="generateBookmarkletBtn" style="margin-top:1rem;padding:0.5rem 1rem;background:linear-gradient(135deg,#e0e0e0,#808080);color:#0a0a0a;border:none;border-radius:8px;font-weight:600;cursor:pointer;">Generate Bookmarklet & Copy</button>
+          <button id="generateBookmarkletBtn" style="margin-top:1rem;padding:0.5rem 1rem;background:linear-gradient(135deg,#e0e0e0,#808080);color:#0a0a0a;border:none;border-radius:8px;font-weight:600;cursor:pointer;">Generate & Copy Bookmarklet</button>
           <button id="injectNowBtn" style="margin-left:1rem;padding:0.5rem 1rem;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);color:#fff;border-radius:8px;cursor:pointer;">Inject Now</button>
         </div>
       </div>
 
-      <!-- ChromeCord Panel -->
-      <div class="panel" id="panel-chromecord">
-        <div class="panel-content">
-          <h2 style="font-weight:700;margin-bottom:1rem;">ChromeCord Theme Generator</h2>
-          <div style="display:flex;gap:1rem;align-items:center;"><label style="color:#aaa;">Primary:</label><input type="color" id="cordPrimary" value="#2d0000"></div>
-          <div style="display:flex;gap:1rem;align-items:center;margin-top:0.5rem;"><label style="color:#aaa;">Accent:</label><input type="color" id="cordAccent" value="#ffcccc"></div>
-          <button id="generateCordBtn" style="margin-top:1rem;padding:0.5rem 1rem;background:linear-gradient(135deg,#e0e0e0,#808080);color:#0a0a0a;border:none;border-radius:8px;font-weight:600;cursor:pointer;">Generate Bookmarklet & Copy</button>
-        </div>
-      </div>
-
-      <!-- ChromeGit Panel -->
-      <div class="panel" id="panel-chromegit">
-        <div class="panel-content">
-          <h2 style="font-weight:700;margin-bottom:1rem;">ChromeGit Theme Generator</h2>
-          <div style="display:flex;gap:1rem;align-items:center;"><label style="color:#aaa;">Primary:</label><input type="color" id="gitPrimary" value="#002200"></div>
-          <div style="display:flex;gap:1rem;align-items:center;margin-top:0.5rem;"><label style="color:#aaa;">Accent:</label><input type="color" id="gitAccent" value="#99dd99"></div>
-          <button id="generateGitBtn" style="margin-top:1rem;padding:0.5rem 1rem;background:linear-gradient(135deg,#e0e0e0,#808080);color:#0a0a0a;border:none;border-radius:8px;font-weight:600;cursor:pointer;">Generate Bookmarklet & Copy</button>
+      <!-- ChromeUniversal Panel -->
+      <div class="panel" id="panel-universal">
+        <div class="dashboard-body">
+          <h2>ChromeUniversal Theme Generator</h2>
+          <p style="color:#aaa;margin-bottom:1rem;">Apply a custom color scheme to any website.</p>
+          <div class="color-picker-row"><label>Primary (background):</label><input type="color" id="uniPrimary" value="#0a0a0a"></div>
+          <div class="color-picker-row"><label>Accent (text/borders):</label><input type="color" id="uniAccent" value="#c0c0c0"></div>
+          <button id="generateUniversalBtn" style="margin-top:1rem;padding:0.5rem 1rem;background:linear-gradient(135deg,#e0e0e0,#808080);color:#0a0a0a;border:none;border-radius:8px;font-weight:600;cursor:pointer;">Generate Bookmarklet & Copy</button>
         </div>
       </div>
 
       <!-- Settings Panel -->
       <div class="panel" id="panel-settings">
-        <div class="panel-content">
-          <div class="glass-card">
-            <h2 style="font-weight:700;margin-bottom:1.5rem;">Settings</h2>
+        <div class="dashboard-body">
+          <div class="glass-card" style="max-width:600px;">
+            <h2>Settings</h2>
             <div id="userInfo" style="margin-bottom:1.5rem;"></div>
             <div class="setting-row"><span>Auto‑apply night mode</span><div class="toggle-switch on" id="autoNightToggle"></div></div>
             <div class="setting-row"><span>Animations</span><div class="toggle-switch on" id="animationsToggle"></div></div>
             <div class="setting-row"><span>Show music on load</span><div class="toggle-switch" id="musicAutoShowToggle"></div></div>
             <div class="setting-row"><span>Default Font</span><input type="text" id="defaultFontInput" value="Inter" style="width:150px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:0.5rem;color:#fff;"></div>
-            <div style="margin-top:1.5rem;display:flex;gap:1rem;"><button id="resetDataBtn" style="padding:0.5rem 1rem;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);color:#fff;border-radius:8px;cursor:pointer;">Reset All Data</button><button id="logoutBtn" style="padding:0.5rem 1rem;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);color:#fff;border-radius:8px;cursor:pointer;">Log Out</button></div>
+            <div style="margin-top:1.5rem;display:flex;gap:1rem;">
+              <button id="resetDataBtn" class="glass-card" style="padding:0.5rem 1rem;cursor:pointer;">Reset All Data</button>
+              <button id="logoutBtn" class="glass-card" style="padding:0.5rem 1rem;cursor:pointer;">Log Out</button>
+            </div>
           </div>
         </div>
       </div>
@@ -360,8 +418,14 @@
       applyTheme(next);
     });
 
+    // Sidebar collapse
+    const sidebar = document.getElementById('sidebar');
+    document.getElementById('collapseSidebar').addEventListener('click', () => {
+      sidebar.classList.toggle('collapsed');
+    });
+
     // Sidebar navigation
-    const buttons = document.querySelectorAll('.sidebar button');
+    const buttons = document.querySelectorAll('.sidebar button[data-panel]');
     const panels = document.querySelectorAll('.panel');
     buttons.forEach(btn => {
       btn.addEventListener('click', () => {
@@ -371,8 +435,45 @@
         panels.forEach(p => p.classList.remove('active'));
         document.getElementById(`panel-${panelId}`).classList.add('active');
         if (panelId === 'discover') loadDiscover();
+        if (panelId === 'dashboard') refreshDashboardStats();
       });
     });
+
+    // Dashboard live data
+    function refreshDashboardStats() {
+      const installed = JSON.parse(localStorage.getItem('installed_mods') || '[]');
+      document.getElementById('kpiMods').textContent = installed.length;
+      const bmCount = parseInt(localStorage.getItem('bookmarklets_generated') || '0');
+      document.getElementById('kpiBookmarklets').textContent = bmCount;
+      // Fetch community mods count (cached)
+      fetch('/api/mods').then(r => r.json()).then(mods => {
+        document.getElementById('kpiDiscover').textContent = mods.length;
+      }).catch(() => {});
+
+      // Recent mods
+      const recentModsDiv = document.getElementById('recentModsList');
+      recentModsDiv.innerHTML = installed.length ? installed.slice(-5).reverse().map(m => `<div style="margin-bottom:0.3rem;">• ${m.name} (${m.type})</div>`).join('') : '<div style="color:#888;">No mods installed yet.</div>';
+
+      // Activity feed
+      const activity = JSON.parse(localStorage.getItem('activity_log') || '[]');
+      document.getElementById('activityFeed').innerHTML = activity.length ? activity.slice(-5).reverse().map(a => `<div>${a}</div>`).join('') : '<div>No recent activity.</div>';
+
+      // Top themes (placeholder)
+      document.getElementById('topThemes').innerHTML = '<div style="color:#888;">Coming soon...</div>';
+    }
+    // Initial load
+    refreshDashboardStats();
+    // Set user name in top bar
+    const user = (function() {
+      const token = localStorage.getItem('chromeweb_token');
+      if (!token) return null;
+      const users = JSON.parse(localStorage.getItem('chromeweb_users') || '[]');
+      return users.find(u => u.token === token);
+    })();
+    if (user) {
+      document.getElementById('dashboardUser').textContent = `Welcome, ${user.username}`;
+    }
+    document.getElementById('currentDate').textContent = new Date().toLocaleDateString();
 
     // Music player
     const audio = document.getElementById('audioPlayer');
@@ -389,7 +490,11 @@
       audio.src = track.url; currentTrackIndex = index;
       document.getElementById('musicTitle').textContent = track.name || 'Unknown';
       document.getElementById('musicArtist').textContent = track.artist || '';
-      document.getElementById('musicCover').innerHTML = track.cover ? `<img src="${track.cover}" onerror="this.parentElement.innerHTML='<svg width=80 height=80 viewBox=\\'0 0 24 24\\' fill=none stroke=#888 stroke-width=1.5><path d=\\'M9 18V5l12-2v13\\'/><circle cx=6 cy=18 r=3/><circle cx=18 cy=16 r=3/></svg>'">` : '<svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="1.5"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>';
+      if (track.cover) {
+        document.getElementById('musicCover').innerHTML = `<img src="${track.cover}" onerror="this.parentElement.innerHTML='<svg width=80 height=80 viewBox=\\'0 0 24 24\\' fill=none stroke=#888 stroke-width=1.5><path d=\\'M9 18V5l12-2v13\\'/><circle cx=6 cy=18 r=3/><circle cx=18 cy=16 r=3/></svg>'">`;
+      } else {
+        document.getElementById('musicCover').innerHTML = '<svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="1.5"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>';
+      }
       audio.play().catch(()=>{});
       updatePlayIcon();
     }
@@ -422,17 +527,27 @@
     audio.addEventListener('play', updatePlayIcon); audio.addEventListener('pause', updatePlayIcon);
     audio.addEventListener('ended', () => { if(repeatMode==='one'){ audio.currentTime=0; audio.play(); } else nextTrack(); });
 
+    // Add track from URL or file
     document.getElementById('addTrackBtn').addEventListener('click', () => {
       const url = document.getElementById('trackUrlInput').value.trim();
-      if(url){
-        const name = prompt('Track name (optional):') || url.split('/').pop();
-        const artist = prompt('Artist (optional):') || '';
-        const cover = prompt('Cover image URL (optional):') || '';
-        playlist.push({url, name, artist, cover}); updatePlaylistCount();
-        if(currentTrackIndex===-1) loadTrack(0);
-        document.getElementById('trackUrlInput').value = '';
-      }
+      if(url) addTrackToPlaylist(url);
     });
+    window.handleFileSelect = function(event) {
+      const file = event.target.files[0];
+      if (file) {
+        const objectURL = URL.createObjectURL(file);
+        addTrackToPlaylist(objectURL, file.name);
+      }
+    };
+    function addTrackToPlaylist(url, name) {
+      const trackName = name || prompt('Track name (optional):') || url.split('/').pop();
+      const artist = prompt('Artist (optional):') || '';
+      const cover = prompt('Cover image URL (optional):') || '';
+      playlist.push({url, name: trackName, artist, cover});
+      updatePlaylistCount();
+      if(currentTrackIndex===-1) loadTrack(0);
+      document.getElementById('trackUrlInput').value = '';
+    }
 
     // Discover panel
     async function loadDiscover() {
@@ -440,15 +555,29 @@
       try {
         const res = await fetch('/api/mods'); const mods = await res.json();
         if(mods.length===0) { container.innerHTML = '<p style="color:#aaa;">No community mods yet.</p>'; return; }
-        container.innerHTML = mods.map(m => `<div class="feature-item"><svg width="2rem" height="2rem" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg><h4 style="color:#fff;">${m.name}</h4><p style="color:#b0b0b0;font-size:0.8rem;">by ${m.author} · ${m.type}</p><button class="installModBtn" data-name="${m.name}" data-type="${m.type}" data-content="${encodeURIComponent(m.content)}">Install</button></div>`).join('');
+        container.innerHTML = mods.map(m => `<div class="glass-card">
+          <h3>${m.name}</h3>
+          <p>by ${m.author} · ${m.type}</p>
+          <p style="margin:0.5rem 0;font-size:0.8rem;">${m.description || ''}</p>
+          <button class="installModBtn" data-name="${m.name}" data-type="${m.type}" data-content="${encodeURIComponent(m.content)}" style="padding:0.3rem 0.8rem;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);color:#fff;border-radius:6px;cursor:pointer;">Install & Copy Bookmarklet</button>
+        </div>`).join('');
         document.querySelectorAll('.installModBtn').forEach(b => b.addEventListener('click', async (e) => {
           const { name, type, content } = e.target.dataset;
           const decoded = decodeURIComponent(content);
           const installed = JSON.parse(localStorage.getItem('installed_mods')||'[]');
           if(!installed.find(m=>m.name===name)){ installed.push({name,type}); localStorage.setItem('installed_mods',JSON.stringify(installed)); }
+          // Increment bookmarklet counter
+          let count = parseInt(localStorage.getItem('bookmarklets_generated')||'0') + 1;
+          localStorage.setItem('bookmarklets_generated', count);
+          // Log activity
+          const activity = JSON.parse(localStorage.getItem('activity_log')||'[]');
+          activity.push(`Installed "${name}" at ${new Date().toLocaleTimeString()}`);
+          localStorage.setItem('activity_log', JSON.stringify(activity));
+          // Generate bookmarklet
           let bm = ''; if(type==='css') bm = 'javascript:(function(){var s=document.createElement("style");s.textContent='+JSON.stringify(decoded)+';document.head.appendChild(s);})();';
           else if(type==='js') bm = 'javascript:(function(){'+decoded+'})();';
-          try { await navigator.clipboard.writeText(bm); alert('Installed! Bookmarklet copied to clipboard.'); } catch { prompt('Copy this bookmarklet:', bm); }
+          try { await navigator.clipboard.writeText(bm); alert('Bookmarklet copied to clipboard!'); } catch { prompt('Copy this bookmarklet:', bm); }
+          refreshDashboardStats();
         }));
       } catch { container.innerHTML = '<p style="color:#ff5555;">Could not load mods.</p>'; }
     }
@@ -456,14 +585,25 @@
 
     // Bookmarklets pre‑made list
     const bookmarklets = [
-      { name:'Night Mode', desc:'Turns every site dark.', code:'javascript:(function(){var s=document.createElement("link");s.rel="stylesheet";s.href="https://chromeweb.vercel.app/cdn/themes/night.css";document.head.appendChild(s);})();' },
-      { name:'ChromeCord Panel', desc:'Full Discord themer.', code:'javascript:'+encodeURIComponent('(function(){var d=document;if(d.getElementById("cw-panel"))return;/*...*/})();') },
-      { name:'ChromeGit Panel', desc:'GitHub color wash.', code:'javascript:'+encodeURIComponent('(function(){var d=document;if(d.getElementById("cw-panel"))return;/*...*/})();') },
+      { name:'Night Mode', desc:'Instant dark background.', code:'javascript:(function(){var l=document.createElement("link");l.rel="stylesheet";l.href="https://chromeweb.vercel.app/cdn/themes/night.css";document.head.appendChild(l);})();' },
       { name:'Text Enhancer', desc:'Gradient text on any page.', code:'javascript:(function(){var s=document.createElement("script");s.src="https://chromeweb.vercel.app/cdn/scripts/text-enhancer.js";document.head.appendChild(s);})();' },
-      { name:'Font Changer', desc:'Change fonts instantly.', code:'javascript:(function(){var s=document.createElement("script");s.src="https://chromeweb.vercel.app/cdn/scripts/font-changer.js";document.head.appendChild(s);})();' }
+      { name:'Font Changer', desc:'Change fonts instantly.', code:'javascript:(function(){var s=document.createElement("script");s.src="https://chromeweb.vercel.app/cdn/scripts/font-changer.js";document.head.appendChild(s);})();' },
+      { name:'Audio Player', desc:'Floating music widget.', code:'javascript:(function(){var s=document.createElement("script");s.src="https://chromeweb.vercel.app/cdn/scripts/audio-player.js";document.head.appendChild(s);})();' }
     ];
-    document.getElementById('bookmarkletList').innerHTML = bookmarklets.map(b => `<div class="feature-item"><h4 style="color:#fff;">${b.name}</h4><p style="color:#b0b0b0;font-size:0.85rem;">${b.desc}</p><button class="copyBmBtn" data-code="${encodeURIComponent(b.code)}">Copy</button></div>`).join('');
-    document.querySelectorAll('.copyBmBtn').forEach(b => b.addEventListener('click', async () => { try { await navigator.clipboard.writeText(decodeURIComponent(b.dataset.code)); alert('Copied!'); } catch { prompt('Copy:', decodeURIComponent(b.dataset.code)); } }));
+    document.getElementById('bookmarkletList').innerHTML = bookmarklets.map(b => `<div class="glass-card">
+      <h3>${b.name}</h3>
+      <p style="margin:0.5rem 0;font-size:0.85rem;">${b.desc}</p>
+      <button class="copyBmBtn" data-code="${encodeURIComponent(b.code)}" style="padding:0.3rem 0.8rem;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);color:#fff;border-radius:6px;cursor:pointer;">Copy Bookmarklet</button>
+    </div>`).join('');
+    document.querySelectorAll('.copyBmBtn').forEach(b => b.addEventListener('click', async () => {
+      const code = decodeURIComponent(b.dataset.code);
+      try { await navigator.clipboard.writeText(code); alert('Copied!'); } catch { prompt('Copy:', code); }
+      let count = parseInt(localStorage.getItem('bookmarklets_generated')||'0') + 1;
+      localStorage.setItem('bookmarklets_generated', count);
+      const activity = JSON.parse(localStorage.getItem('activity_log')||'[]');
+      activity.push(`Copied bookmarklet "${b.parentElement.querySelector('h3').textContent}"`);
+      localStorage.setItem('activity_log', JSON.stringify(activity));
+    }));
 
     // Code Tools
     document.getElementById('generateBookmarkletBtn').addEventListener('click', async () => {
@@ -473,6 +613,8 @@
       let bm = ''; if(type==='css') bm = 'javascript:(function(){var s=document.createElement("style");s.textContent='+JSON.stringify(code)+';document.head.appendChild(s);})();';
       else if(type==='js') bm = 'javascript:(function(){'+code+'})();';
       try { await navigator.clipboard.writeText(bm); alert('Bookmarklet copied!'); } catch { prompt('Copy:', bm); }
+      let count = parseInt(localStorage.getItem('bookmarklets_generated')||'0') + 1;
+      localStorage.setItem('bookmarklets_generated', count);
     });
     document.getElementById('injectNowBtn').addEventListener('click', () => {
       const code = document.getElementById('codeInput').value.trim();
@@ -481,30 +623,22 @@
       else if(type==='js'){ try { eval(code); } catch(e) { alert('Error: '+e); } }
     });
 
-    // ChromeCord generator
-    document.getElementById('generateCordBtn').addEventListener('click', async () => {
-      const primary = document.getElementById('cordPrimary').value;
-      const accent = document.getElementById('cordAccent').value;
-      const themeCSS = `*{background-color:${primary}!important;color:${accent}!important;border-color:${accent}!important}a{color:${accent}!important}[class*="guilds"] *{background-color:transparent!important}img,[class*="avatar"]{background-color:transparent!important}`;
+    // ChromeUniversal generator
+    document.getElementById('generateUniversalBtn').addEventListener('click', async () => {
+      const primary = document.getElementById('uniPrimary').value;
+      const accent = document.getElementById('uniAccent').value;
+      const themeCSS = `*{background-color:${primary}!important;color:${accent}!important;border-color:${accent}!important}a{color:${accent}!important}img,svg{background-color:transparent!important}`;
       const bm = 'javascript:(function(){var s=document.createElement("style");s.textContent='+JSON.stringify(themeCSS)+';document.head.appendChild(s);})();';
-      try { await navigator.clipboard.writeText(bm); alert('Bookmarklet copied!'); } catch { prompt('Copy:', bm); }
-    });
-
-    // ChromeGit generator
-    document.getElementById('generateGitBtn').addEventListener('click', async () => {
-      const primary = document.getElementById('gitPrimary').value;
-      const accent = document.getElementById('gitAccent').value;
-      const themeCSS = `*:not([class*="a-f"]):not([class*="0-9"]){background-color:${primary}!important;color:${accent}!important;border-color:${accent}!important}a{color:${accent}!important}img{background-color:transparent!important}`;
-      const bm = 'javascript:(function(){var s=document.createElement("style");s.textContent='+JSON.stringify(themeCSS)+';document.head.appendChild(s);})();';
-      try { await navigator.clipboard.writeText(bm); alert('Bookmarklet copied!'); } catch { prompt('Copy:', bm); }
+      try { await navigator.clipboard.writeText(bm); alert('Universal theme bookmarklet copied!'); } catch { prompt('Copy:', bm); }
     });
 
     // Settings
-    function getUser(){ const token = localStorage.getItem('chromeweb_token'); if(!token) return null; const users=JSON.parse(localStorage.getItem('chromeweb_users')||'[]'); return users.find(u=>u.token===token); }
-    const user = getUser();
     const userInfoDiv = document.getElementById('userInfo');
-    if(user) userInfoDiv.innerHTML = `<div style="display:flex;align-items:center;gap:1rem;"><div style="width:48px;height:48px;border-radius:50%;background:rgba(192,192,192,0.15);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:1.5rem;color:#c0c0c0;">${user.username.charAt(0).toUpperCase()}</div><div><strong>${user.username}</strong><br><span style="color:#aaa;">${user.email}</span></div></div>`;
-    else userInfoDiv.innerHTML = '<p><a href="accounts.html" style="color:#c0c0c0;">Sign in</a> to manage your account.</p>';
+    if(user) {
+      userInfoDiv.innerHTML = `<div style="display:flex;align-items:center;gap:1rem;"><div style="width:48px;height:48px;border-radius:50%;background:rgba(192,192,192,0.15);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:1.5rem;color:#c0c0c0;">${user.username.charAt(0).toUpperCase()}</div><div><strong>${user.username}</strong><br><span style="color:#aaa;">${user.email}</span></div></div>`;
+    } else {
+      userInfoDiv.innerHTML = '<p><a href="accounts.html" style="color:#c0c0c0;">Sign in</a> to manage your account.</p>';
+    }
     document.getElementById('logoutBtn').addEventListener('click', () => { localStorage.removeItem('chromeweb_token'); location.reload(); });
     document.getElementById('resetDataBtn').addEventListener('click', () => { if(confirm('Clear all data?')){ localStorage.clear(); location.reload(); } });
 
@@ -513,10 +647,7 @@
     initToggle('animationsToggle','animations',true);
     initToggle('musicAutoShowToggle','musicAutoShow',false);
     document.getElementById('defaultFontInput').addEventListener('input', e => localStorage.setItem('defaultFont', e.target.value));
-    const savedFont = localStorage.getItem('defaultFont')||'Inter'; document.getElementById('defaultFontInput').value = savedFont;
-
-    // Installed mods list (empty for now in dashboard layout - you can later fill)
-    // Placeholder: later you can add code to show installed mods in the 2x2 KPI or bottom cards.
+    document.getElementById('defaultFontInput').value = localStorage.getItem('defaultFont') || 'Inter';
   </script>
 </body>
 </html>
