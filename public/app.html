@@ -781,49 +781,47 @@
     document.getElementById('defaultFontInput').addEventListener('input', e => localStorage.setItem('defaultFont', e.target.value));
     document.getElementById('defaultFontInput').value = localStorage.getItem('defaultFont') || 'Inter';
 
-    // ---- MOD CREATOR PANEL LOGIC ----
-    document.getElementById('publishModBtn2').addEventListener('click', async () => {
-      const token = localStorage.getItem('chromeweb_token');
-      const users = JSON.parse(localStorage.getItem('chromeweb_users') || '[]');
-      const user = users.find(u => u.token === token);
-      if (!user) {
-        document.getElementById('modCreatorMsg').textContent = 'You must be logged in to publish.';
-        return;
-      }
-      const name = document.getElementById('modName').value.trim();
-      const type = document.getElementById('modType').value;
-      const description = document.getElementById('modDesc').value.trim();
-      const content = document.getElementById('modContent').value.trim();
-      if (!name || !content) {
-        document.getElementById('modCreatorMsg').textContent = 'Name and code are required.';
-        return;
-      }
-      try {
-        const res = await fetch('/api/mods', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ name, description, author: user.username, type, content }),
-        });
-        const data = await res.json();
-        if (res.ok) {
-          document.getElementById('modCreatorMsg').textContent = `Mod "${name}" published!`;
-          // add to installed mods
-          const mods = JSON.parse(localStorage.getItem('installed_mods') || '[]');
-          if (!mods.find(m => m.name === name)) {
-            mods.push({ name, type });
-            localStorage.setItem('installed_mods', JSON.stringify(mods));
-          }
-          // clear fields
-          document.getElementById('modName').value = '';
-          document.getElementById('modDesc').value = '';
-          document.getElementById('modContent').value = '';
-        } else {
-          document.getElementById('modCreatorMsg').textContent = 'Error: ' + (data.error || 'Unknown');
-        }
-      } catch (err) {
-        document.getElementById('modCreatorMsg').textContent = 'Failed to reach server.';
-      }
+// ---- MOD CREATOR PANEL LOGIC (FIXED) ----
+document.getElementById('publishModBtn2').addEventListener('click', async () => {
+  // get user from the new localStorage key (set by accounts.html)
+  const userData = localStorage.getItem('chromeweb_user');
+  if (!userData) {
+    document.getElementById('modCreatorMsg').textContent = 'You must be logged in to publish.';
+    return;
+  }
+  const user = JSON.parse(userData);
+  const name = document.getElementById('modName').value.trim();
+  const type = document.getElementById('modType').value;
+  const description = document.getElementById('modDesc').value.trim();
+  const content = document.getElementById('modContent').value.trim();
+  if (!name || !content) {
+    document.getElementById('modCreatorMsg').textContent = 'Name and code are required.';
+    return;
+  }
+  try {
+    const res = await fetch('/api/mods', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, description, author: user.username, type, content }),
     });
+    const data = await res.json();
+    if (res.ok) {
+      document.getElementById('modCreatorMsg').textContent = `Mod "${name}" published!`;
+      const mods = JSON.parse(localStorage.getItem('installed_mods') || '[]');
+      if (!mods.find(m => m.name === name)) {
+        mods.push({ name, type });
+        localStorage.setItem('installed_mods', JSON.stringify(mods));
+      }
+      document.getElementById('modName').value = '';
+      document.getElementById('modDesc').value = '';
+      document.getElementById('modContent').value = '';
+    } else {
+      document.getElementById('modCreatorMsg').textContent = 'Error: ' + (data.error || 'Unknown');
+    }
+  } catch (err) {
+    document.getElementById('modCreatorMsg').textContent = 'Failed to reach server.';
+  }
+});
   </script>
 </body>
 </html>
