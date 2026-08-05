@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chromed Browser</title>
+  <link rel="icon" type="image/png" href="icon.png">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 70 70' fill='none'%3E%3Ccircle cx='35' cy='35' r='34' stroke='%23c0c0c0' stroke-width='2'/%3E%3Cpath d='M20 25h30v20H20z' fill='none' stroke='%23c0c0c0' stroke-width='2'/%3E%3Cpath d='M25 30l10 10-10 10' stroke='%23c0c0c0' stroke-width='2' fill='none'/%3E%3C/svg%3E">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400..700&display=swap" rel="stylesheet">
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background: #000; color: #fff; overflow-x: hidden; min-height: 100vh; }
+    #vanta-bg, #vanta-bg-light { position:fixed; top:0; left:0; width:100vw; height:100vh; z-index:0; pointer-events:none; }
+    #vanta-dots, #vanta-dots-light { position:fixed; top:0; left:0; width:100%; height:100%; z-index:1; pointer-events:none; opacity:0.3; }
+    #vanta-bg-light, #vanta-dots-light { display:none; }
+
+    .topbar {
+      position:relative; z-index:1000; padding:16px 40px;
+      display:flex; justify-content:space-between; align-items:center;
+      background: rgba(0,0,0,0.85); backdrop-filter:blur(12px);
+      border-bottom:1px solid rgba(255,255,255,0.05);
+    }
+    .topbar .logo { display:flex; align-items:center; gap:10px; font-size:1.3rem; font-weight:900; text-decoration:none; }
+    .topbar .logo svg { width:32px; height:32px; }
+    .topbar .logo span { background:linear-gradient(135deg,#fff,#aaa); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+    .topbar nav { display:flex; align-items:center; gap:28px; }
+    .topbar nav a { color:#aaa; text-decoration:none; font-size:0.95rem; transition:color 0.2s; }
+    .topbar nav a:hover { color:#fff; }
+
+    .theme-toggle-btn {
+      background: rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.15);
+      border-radius:9999px; padding:0.5rem 1rem; cursor:pointer; display:flex; align-items:center; gap:0.5rem;
+      color:#c0c0c0; font-size:0.85rem; font-weight:500; transition: background 0.2s, border-color 0.2s, color 0.2s;
+    }
+    .theme-toggle-btn:hover { background:rgba(255,255,255,0.1); border-color:rgba(255,255,255,0.25); color:#fff; }
+    .toggle-track { display:flex; align-items:center; gap:0.4rem; }
+    .toggle-icons { position:relative; width:18px; height:18px; }
+    .sun-icon, .moon-icon { position:absolute; top:0; left:0; transition:opacity 0.3s, transform 0.5s; }
+    [data-theme="dark"] .moon-icon { opacity:1; transform:rotate(0deg); }
+    [data-theme="dark"] .sun-icon { opacity:0; transform:rotate(90deg); }
+    [data-theme="light"] .moon-icon { opacity:0; transform:rotate(-90deg); }
+    [data-theme="light"] .sun-icon { opacity:1; transform:rotate(0deg); }
+    .toggle-label::after { content:'Light'; }
+    [data-theme="light"] .toggle-label::after { content:'Dark'; }
+
+    .browser-container {
+      position:relative; z-index:2; max-width:1000px; margin:0 auto; padding:2rem;
+    }
+
+    .glass-card {
+      background: rgba(18,18,18,0.55); backdrop-filter: blur(16px);
+      border:1px solid rgba(192,192,192,0.15); border-radius:1.5rem;
+      padding:2rem; margin-bottom:2rem;
+      box-shadow:0 30px 60px rgba(0,0,0,0.8), inset 0 1px 0 rgba(255,255,255,0.06);
+    }
+
+    .search-bar {
+      display:flex; align-items:center; gap:1rem; margin-bottom:2rem;
+    }
+    .search-bar input {
+      flex:1; background:rgba(255,255,255,0.05); border:1px solid rgba(192,192,192,0.2);
+      border-radius:12px; padding:0.8rem 1rem; color:#fff; font-size:1rem; outline:none;
+    }
+    .search-bar input:focus { border-color:#808080; }
+    .search-bar button {
+      padding:0.8rem 1.5rem; background:linear-gradient(135deg,#e0e0e0,#808080);
+      color:#0a0a0a; border:none; border-radius:12px; font-weight:600; cursor:pointer;
+    }
+
+    .setting-row {
+      display:flex; justify-content:space-between; align-items:center;
+      padding:0.8rem 0; border-bottom:1px solid rgba(255,255,255,0.05);
+    }
+    .toggle-switch {
+      position: relative; width: 40px; height: 22px; background: #555; border-radius: 11px;
+      cursor: pointer; transition: background 0.3s;
+    }
+    .toggle-switch.on { background: #c0c0c0; }
+    .toggle-switch::after {
+      content: ''; position: absolute; top: 2px; left: 2px; width: 18px; height: 18px;
+      background: #fff; border-radius: 50%; transition: left 0.3s;
+    }
+    .toggle-switch.on::after { left: 20px; }
+
+    .doom-card {
+      margin-top:2rem; overflow:hidden; min-height:400px;
+    }
+
+    .download-links {
+      display:flex; gap:1rem; flex-wrap:wrap;
+    }
+    .download-links a {
+      background: rgba(255,255,255,0.05); border:1px solid rgba(192,192,192,0.2);
+      border-radius:12px; padding:1rem 2rem; color:#fff; text-decoration:none; transition:0.2s;
+    }
+    .download-links a:hover { background:rgba(255,255,255,0.1); }
+
+    /* Light mode overrides */
+    [data-theme="light"] body { background:#f7f7f7; }
+    [data-theme="light"] .topbar { background:rgba(255,255,255,0.85); border-bottom-color:rgba(0,0,0,0.1); }
+    [data-theme="light"] .topbar .logo span { background:linear-gradient(135deg,#333,#555); -webkit-background-clip:text; background-clip:text; }
+    [data-theme="light"] .topbar nav a { color:#555; }
+    [data-theme="light"] .topbar nav a:hover { color:#000; }
+    [data-theme="light"] .theme-toggle-btn { background:rgba(0,0,0,0.05); border-color:rgba(0,0,0,0.15); color:#333; }
+    [data-theme="light"] .theme-toggle-btn:hover { background:rgba(0,0,0,0.1); border-color:rgba(0,0,0,0.25); color:#000; }
+    [data-theme="light"] .glass-card { background:rgba(255,255,255,0.6); border-color:rgba(0,0,0,0.1); }
+    [data-theme="light"] .search-bar input { background:rgba(0,0,0,0.03); border-color:rgba(0,0,0,0.1); color:#222; }
+    [data-theme="light"] .toggle-switch { background: #ccc; }
+    [data-theme="light"] .toggle-switch.on { background: #333; }
+    [data-theme="light"] .toggle-switch::after { background: #fff; }
+  </style>
+</head>
+<body>
+  <div id="vanta-bg"></div>
+  <div id="vanta-dots"></div>
+  <div id="vanta-bg-light"></div>
+  <div id="vanta-dots-light"></div>
+
+  <header class="topbar">
+    <a href="index.html" class="logo">
+      <svg viewBox="0 0 70 70" fill="none"><circle cx="35" cy="35" r="34" stroke="url(#grad)" stroke-width="2"/><path d="M20 25h30v20H20z" fill="none" stroke="url(#grad)" stroke-width="2"/><path d="M25 30l10 10-10 10" stroke="url(#grad)" stroke-width="2" fill="none"/><defs><linearGradient id="grad" x1="0" y1="0" x2="70" y2="70"><stop stop-color="#fff"/><stop offset="1" stop-color="#808080"/></linearGradient></defs></svg>
+      <span>Chromed</span>
+    </a>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="browser.html">Browser</a>
+      <a href="app.html">Dashboard</a>
+      <a href="store.html">Store</a>
+      <button class="theme-toggle-btn" id="themeToggle"><span class="toggle-track"><span class="toggle-icons"><svg class="sun-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg><svg class="moon-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></span><span class="toggle-label"></span></span></button>
+    </nav>
+  </header>
+
+  <main class="browser-container">
+    <!-- Search Bar -->
+    <div class="search-bar">
+      <input type="text" id="searchInput" placeholder="Search or enter address">
+      <button id="searchBtn">Search</button>
+    </div>
+
+    <!-- Privacy Shields -->
+    <div class="glass-card">
+      <h2 style="margin-bottom:1rem;">Privacy Shields</h2>
+      <div id="shieldsContainer"></div>
+    </div>
+
+    <!-- Tor Window -->
+    <div class="glass-card" style="text-align:center;">
+      <h3>Need a private window?</h3>
+      <p style="color:#aaa; margin:1rem 0;">Open a window routed through the Tor network for maximum anonymity.</p>
+      <button id="torBtn" style="padding:0.8rem 2rem; background:linear-gradient(135deg,#e0e0e0,#808080); color:#0a0a0a; border:none; border-radius:12px; font-weight:600; cursor:pointer;">Open Tor Window</button>
+    </div>
+
+    <!-- Doom Easter Egg -->
+    <div class="glass-card doom-card">
+      <h2 style="margin-bottom:1rem;">Can it run Doom?</h2>
+      <div id="doomContainer" style="width:100%; height:400px;"></div>
+    </div>
+
+    <!-- Download Links -->
+    <div class="glass-card">
+      <h2 style="margin-bottom:1rem;">Download Chromed</h2>
+      <div class="download-links">
+        <a href="#">Windows</a>
+        <a href="#">macOS</a>
+        <a href="#">Linux</a>
+      </div>
+    </div>
+  </main>
+
+  <footer style="text-align:center; padding:20px; color:rgba(255,255,255,0.2); font-size:0.8rem; position:relative; z-index:2;">
+    Chromed &copy; 2025 — <a href="#" style="color:rgba(255,255,255,0.4);">GitHub</a> · <a href="#" style="color:rgba(255,255,255,0.4);">Discord</a>
+  </footer>
+
+  <!-- Vanta & Doom scripts -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.globe.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.dots.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/js-dos@latest/dist/js-dos.js"></script>
+
+  <script>
+    // Vanta backgrounds
+    VANTA.GLOBE({ el: "#vanta-bg", mouseControls: true, touchControls: true, gyroControls: false, minHeight: 200, minWidth: 200, scale: 1, scaleMobile: 1, color: 0xeeeeee, size: 2, backgroundColor: 0x0 });
+    VANTA.DOTS({ el: "#vanta-dots", mouseControls: false, touchControls: false, gyroControls: false, minHeight: 200, minWidth: 200, scale: 1, scaleMobile: 1, color: 0xd7d7d7, color2: 0xd7d7d7, size: 1.6, spacing: 15, showLines: false, backgroundColor: 0x0 });
+    VANTA.GLOBE({ el: "#vanta-bg-light", mouseControls: false, touchControls: false, gyroControls: false, minHeight: 200, minWidth: 200, scale: 1, scaleMobile: 1, color: 0x1b191a, color2: 0xf0e0e, size: 0.9, backgroundColor: 0xf7f7f7 });
+    VANTA.DOTS({ el: "#vanta-dots-light", mouseControls: false, touchControls: false, gyroControls: false, minHeight: 200, minWidth: 200, scale: 1, scaleMobile: 1, color: 0x141313, color2: 0x80808, size: 1.6, spacing: 15, showLines: false, backgroundColor: 0xf7f2f2 });
+
+    // Theme toggle
+    const html = document.documentElement;
+    const themeToggle = document.getElementById('themeToggle');
+    const darkBg = document.getElementById('vanta-bg');
+    const darkDots = document.getElementById('vanta-dots');
+    const lightBg = document.getElementById('vanta-bg-light');
+    const lightDots = document.getElementById('vanta-dots-light');
+    function applyTheme(t) {
+      if (t === 'light') {
+        darkBg.style.display = 'none'; darkDots.style.display = 'none';
+        lightBg.style.display = 'block'; lightDots.style.display = 'block';
+      } else {
+        darkBg.style.display = 'block'; darkDots.style.display = 'block';
+        lightBg.style.display = 'none'; lightDots.style.display = 'none';
+      }
+      window.dispatchEvent(new Event('resize'));
+    }
+    const savedTheme = localStorage.getItem('theme') || 'dark';
+    html.setAttribute('data-theme', savedTheme);
+    applyTheme(savedTheme);
+    themeToggle.addEventListener('click', () => {
+      const cur = html.getAttribute('data-theme');
+      const next = cur === 'dark' ? 'light' : 'dark';
+      html.setAttribute('data-theme', next);
+      localStorage.setItem('theme', next);
+      applyTheme(next);
+    });
+
+    // Search bar
+    document.getElementById('searchBtn').addEventListener('click', () => {
+      const query = document.getElementById('searchInput').value.trim();
+      if (!query) return;
+      // Basic URL detection
+      if (/^https?:\/\//i.test(query) || /\.(com|org|net|io|app|dev)/i.test(query)) {
+        window.open(query.startsWith('http') ? query : 'https://' + query, '_blank');
+      } else {
+        window.open('https://www.google.com/search?q=' + encodeURIComponent(query), '_blank');
+      }
+    });
+
+    // Privacy shield toggles
+    const shields = [
+      { id: 'adBlock', label: 'Ad Blocking', default: true },
+      { id: 'trackerBlock', label: 'Tracker Blocking', default: true },
+      { id: 'fingerprint', label: 'Fingerprint Protection', default: true },
+      { id: 'httpsUpgrade', label: 'HTTPS Upgrading', default: true },
+      { id: 'scriptBlock', label: 'Script Blocking', default: false },
+      { id: 'gpc', label: 'Global Privacy Control', default: true }
+    ];
+    const container = document.getElementById('shieldsContainer');
+    shields.forEach(shield => {
+      const row = document.createElement('div');
+      row.className = 'setting-row';
+      row.innerHTML = `<span>${shield.label}</span><div class="toggle-switch" id="${shield.id}"></div>`;
+      container.appendChild(row);
+      const toggle = document.getElementById(shield.id);
+      const saved = localStorage.getItem('shield_' + shield.id);
+      const isOn = saved !== null ? saved === 'true' : shield.default;
+      if (isOn) toggle.classList.add('on');
+      toggle.addEventListener('click', () => {
+        toggle.classList.toggle('on');
+        localStorage.setItem('shield_' + shield.id, toggle.classList.contains('on'));
+      });
+    });
+
+    // Tor button
+    document.getElementById('torBtn').addEventListener('click', () => {
+      alert('Tor window will be available in the Chromed desktop browser. Download it below.');
+    });
+
+    // Doom
+    Dos(document.getElementById('doomContainer'), {
+      url: "https://cdn.dos.zone/original/2X/9/9a9ac8f44e52f9d16d3d0d9d6b4a7f8f6c0e5b8e.jsdos",
+      style: "width:100%;height:100%;"
+    }).ready((fs, main) => {
+      main(["-c", "DOOM.EXE"]);
+    });
+  </script>
+</body>
+</html>
